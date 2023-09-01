@@ -4,7 +4,7 @@ const Users = () => {
   return (
     <>
       <p> Users </p>
-      <Link to='/'>go to home</Link>
+      <Link to='/home'>go to home</Link>
     </>
   );
 };

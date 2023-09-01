@@ -34,12 +34,12 @@ export function useKeepOutlets() {
   const { keepalive, keepElements } = useContext(KeepAliveContext);
   const isKeep = isKeepPath(keepalive, location.pathname);
   if (isKeep) {
-    keepElements[location.pathname] = element;
+    keepElements.current[location.pathname] = element;
   }
   return (
     <>
-      {Object.entries(keepElements).map(
-        ([pathname, element]: [string, any]) => {
+      {Object.entries(keepElements.current).map(
+        ([pathname, element]: [string, any]) => (
           <div
             key={pathname}
             style={{
@@ -52,8 +52,8 @@ export function useKeepOutlets() {
             hidden={!matchPath(location.pathname, pathname)}
           >
             {element}
-          </div>;
-        }
+          </div>
+        )
       )}
       <div
         hidden={isKeep}

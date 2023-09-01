@@ -10,7 +10,8 @@
     "serve": "cd www && serve"
   },
   "dependencies": {
-    "melza": "workspace:*",
+    "@elza/keepalive": "workspace:^",
+    "@elza/melza": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router": "^6.15.0",

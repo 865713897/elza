@@ -783,7 +783,7 @@ var require_react_development = __commonJS({
           }
           return children;
         }
-        function createContext2(defaultValue) {
+        function createContext3(defaultValue) {
           var context = {
             $$typeof: REACT_CONTEXT_TYPE,
             // As a workaround to support multiple concurrent renderers, we categorize
@@ -1069,7 +1069,7 @@ var require_react_development = __commonJS({
           }
           return dispatcher;
         }
-        function useContext3(Context) {
+        function useContext4(Context) {
           var dispatcher = resolveDispatcher();
           {
             if (Context._context !== void 0) {
@@ -1091,7 +1091,7 @@ var require_react_development = __commonJS({
           var dispatcher = resolveDispatcher();
           return dispatcher.useReducer(reducer, initialArg, init);
         }
-        function useRef3(initialValue) {
+        function useRef4(initialValue) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useRef(initialValue);
         }
@@ -1863,7 +1863,7 @@ var require_react_development = __commonJS({
         exports.Suspense = REACT_SUSPENSE_TYPE;
         exports.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = ReactSharedInternals;
         exports.cloneElement = cloneElement$1;
-        exports.createContext = createContext2;
+        exports.createContext = createContext3;
         exports.createElement = createElement$1;
         exports.createFactory = createFactory;
         exports.createRef = createRef;
@@ -1874,7 +1874,7 @@ var require_react_development = __commonJS({
         exports.startTransition = startTransition;
         exports.unstable_act = act;
         exports.useCallback = useCallback3;
-        exports.useContext = useContext3;
+        exports.useContext = useContext4;
         exports.useDebugValue = useDebugValue;
         exports.useDeferredValue = useDeferredValue;
         exports.useEffect = useEffect3;
@@ -1884,7 +1884,7 @@ var require_react_development = __commonJS({
         exports.useLayoutEffect = useLayoutEffect3;
         exports.useMemo = useMemo3;
         exports.useReducer = useReducer;
-        exports.useRef = useRef3;
+        exports.useRef = useRef4;
         exports.useState = useState3;
         exports.useSyncExternalStore = useSyncExternalStore;
         exports.useTransition = useTransition;
@@ -24397,7 +24397,7 @@ var require_jsx_runtime = __commonJS({
 });
 
 // src/index.tsx
-var import_react2 = __toESM(require_react());
+var import_react3 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
 // ../../node_modules/.pnpm/registry.npmmirror.com+react-router-dom@6.15.0_react-dom@18.2.0_react@18.2.0/node_modules/react-router-dom/dist/index.js
@@ -25513,9 +25513,6 @@ function warningOnce(key, cond, message) {
 }
 var START_TRANSITION = "startTransition";
 var startTransitionImpl = React[START_TRANSITION];
-function Outlet(props) {
-  return useOutlet(props.context);
-}
 function Route(_props) {
   true ? invariant(false, "A <Route> is only ever to be used as the child of <Routes> element, never rendered directly. Please wrap your <Route> in a <Routes>.") : invariant(false);
 }
@@ -26216,28 +26213,107 @@ function usePageHide(callback, options) {
   }, [callback, capture]);
 }
 
-// src/layouts/index.tsx
+// ../../packages/keepalive/lib/index.js
 var import_jsx_runtime = __toESM(require_jsx_runtime());
+var import_react = __toESM(require_react());
+
+// ../../packages/keepalive/lib/PathMatcher.js
+var PathMatcher = class {
+  constructor(matchers) {
+    this.strategies = [];
+    this.strategies = matchers;
+  }
+  addMatcher(matcher) {
+    this.strategies.push(matcher);
+  }
+  match(item, path) {
+    return this.strategies.some((strategy) => strategy(item, path));
+  }
+};
+var PathMatcher_default = PathMatcher;
+
+// ../../packages/keepalive/lib/index.js
+var __rest = function(s, e) {
+  var t = {};
+  for (var p in s)
+    if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+      t[p] = s[p];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function")
+    for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+      if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+        t[p[i]] = s[p[i]];
+    }
+  return t;
+};
+var KeepAliveContext = (0, import_react.createContext)({
+  keepalive: [],
+  keepElements: {}
+});
+var isKeepPath = (aliveList, path) => {
+  const pathMatchers = [
+    (item, path2) => path2 === item,
+    (item, path2) => item instanceof RegExp && item.test(path2),
+    (item, path2) => typeof item === "string" && item.toLowerCase() === path2
+  ];
+  const matcher = new PathMatcher_default(pathMatchers);
+  let isKeep = false;
+  for (const item of aliveList) {
+    isKeep = matcher.match(item, path);
+  }
+  return isKeep;
+};
+function useKeepOutlets() {
+  const location = useLocation();
+  const element = useOutlet();
+  const { keepalive, keepElements } = (0, import_react.useContext)(KeepAliveContext);
+  const isKeep = isKeepPath(keepalive, location.pathname);
+  if (isKeep) {
+    keepElements.current[location.pathname] = element;
+  }
+  return (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [Object.entries(keepElements.current).map(([pathname, element2]) => (0, import_jsx_runtime.jsx)("div", { style: {
+    height: "100%",
+    width: "100%",
+    position: "relative",
+    overflow: "hidden auto"
+  }, className: "rumtime-keep-alive-layout", hidden: !matchPath(location.pathname, pathname), children: element2 }, pathname)), (0, import_jsx_runtime.jsx)("div", { hidden: isKeep, style: {
+    height: "100%",
+    width: "100%",
+    position: "relative",
+    overflow: "hidden auto"
+  }, className: "rumtime-keep-alive-layout-no", children: !isKeep && element })] });
+}
+var KeepAliveLayout = (props) => {
+  const { keepalive } = props, rest = __rest(props, ["keepalive"]);
+  const keepElements = (0, import_react.useRef)({});
+  function dropByCacheKey(path) {
+    keepElements.current[path] = null;
+  }
+  return (0, import_jsx_runtime.jsx)(KeepAliveContext.Provider, Object.assign({ value: { keepalive, keepElements, dropByCacheKey } }, rest));
+};
+var lib_default = KeepAliveLayout;
+
+// src/layouts/index.tsx
+var import_jsx_runtime2 = __toESM(require_jsx_runtime());
 var Layout = () => {
   const { pathname } = useLocation();
-  console.log(pathname, "pathname");
-  return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
-    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+  const element = useKeepOutlets();
+  return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { children: [
+    /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { children: [
       "\u5F53\u524D\u8DEF\u7531: ",
       pathname
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Outlet, {}) })
+    /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { children: element })
   ] });
 };
 var layouts_default = Layout;
 
 // src/pages/hello/index.tsx
-var import_react = __toESM(require_react());
-var import_jsx_runtime2 = __toESM(require_jsx_runtime());
+var import_react2 = __toESM(require_react());
+var import_jsx_runtime3 = __toESM(require_jsx_runtime());
 var Hello = () => {
-  const [text, setText] = import_react.default.useState("home");
-  return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(import_jsx_runtime2.Fragment, { children: [
-    /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
+  const [text, setText] = import_react2.default.useState("home");
+  return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_jsx_runtime3.Fragment, { children: [
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
       "p",
       {
         onClick: () => {
@@ -26250,43 +26326,43 @@ var Hello = () => {
         ]
       }
     ),
-    /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Link, { to: "/users", children: "go to users" })
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Link, { to: "/users", children: "go to users" })
   ] });
 };
 var hello_default = Hello;
 
 // src/pages/user/index.tsx
-var import_jsx_runtime3 = __toESM(require_jsx_runtime());
+var import_jsx_runtime4 = __toESM(require_jsx_runtime());
 var Users = () => {
-  return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_jsx_runtime3.Fragment, { children: [
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { children: " Users " }),
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Link, { to: "/", children: "go to home" })
+  return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { children: " Users " }),
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Link, { to: "/home", children: "go to home" })
   ] });
 };
 var user_default = Users;
 
 // src/pages/me/index.tsx
-var import_jsx_runtime4 = __toESM(require_jsx_runtime());
+var import_jsx_runtime5 = __toESM(require_jsx_runtime());
 var Me = () => {
-  return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { children: " Me " }),
+  return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(import_jsx_runtime5.Fragment, { children: [
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { children: " Me " }),
     " ",
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Link, { to: "/", children: "go Home" })
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Link, { to: "/", children: "go Home" })
   ] });
 };
 var me_default = Me;
 
 // src/index.tsx
-var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+var import_jsx_runtime6 = __toESM(require_jsx_runtime());
 var root = import_client.default.createRoot(document.getElementById("root"));
 var App = () => {
-  return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Routes, { children: /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(Route, { path: "/", element: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(layouts_default, {}), children: [
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Route, { path: "/", element: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(hello_default, {}) }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Route, { path: "/users", element: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(user_default, {}) }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Route, { path: "/me", element: /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(me_default, {}) })
-  ] }) }) });
+  return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(lib_default, { keepalive: ["/home"], children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Routes, { children: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(Route, { path: "/", element: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(layouts_default, {}), children: [
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Route, { path: "/home", element: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(hello_default, {}) }),
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Route, { path: "/users", element: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(user_default, {}) }),
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Route, { path: "/me", element: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(me_default, {}) })
+  ] }) }) }) });
 };
-root.render(import_react2.default.createElement(App));
+root.render(import_react3.default.createElement(App));
 /*! Bundled license information:
 
 react/cjs/react.development.js:

@@ -1,13 +1,16 @@
+import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
+import { useKeepOutlets } from '@elza/keepalive';
 
 const Layout = () => {
   const { pathname } = useLocation();
-  console.log(pathname, 'pathname');
+  const element = useKeepOutlets();
+  
   return (
     <div>
       <div>当前路由: {pathname}</div>
       <div>
-        <Outlet />
+        {element}
       </div>
     </div>
   );

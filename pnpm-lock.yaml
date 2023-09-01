@@ -17,7 +17,10 @@ importers:
 
   examples/app:
     dependencies:
-      melza:
+      '@elza/keepalive':
+        specifier: workspace:^
+        version: link:../../packages/keepalive
+      '@elza/melza':
         specifier: workspace:*
         version: link:../../packages/melza
       react:
@@ -39,6 +42,21 @@ importers:
       serve:
         specifier: ^14.2.1
         version: registry.npmmirror.com/serve@14.2.1
+
+  packages/keepalive:
+    dependencies:
+      react:
+        specifier: '>=18.2.0'
+        version: registry.npmmirror.com/react@18.2.0
+      react-dom:
+        specifier: '>=18.2.0'
+        version: registry.npmmirror.com/react-dom@18.2.0(react@18.2.0)
+      react-router:
+        specifier: '>=6.15.0'
+        version: registry.npmmirror.com/react-router@6.15.0(react@18.2.0)
+      react-router-dom:
+        specifier: '>=6.15.0'
+        version: registry.npmmirror.com/react-router-dom@6.15.0(react-dom@18.2.0)(react@18.2.0)
 
   packages/melza:
     dependencies:
