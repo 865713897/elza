@@ -1,0 +1,33 @@
+{
+  "name": "melza",
+  "version": "0.0.1",
+  "description": "轻量级框架",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "pnpm esbuild src/** --bundle --outdir=lib --platform=node --external:esbuild",
+    "dev": "pnpm build --watch"
+  },
+  "bin": {
+    "melza": "./bin/melza.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/865713897/create-yao.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/865713897/create-yao/issues"
+  },
+  "homepage": "https://github.com/865713897/create-yao#readme",
+  "dependencies": {
+    "commander": "^11.0.0",
+    "express": "^4.18.2",
+    "portfinder": "^1.0.32"
+  },
+  "devDependencies": {
+    "@types/node": "^20.5.7"
+  }
+}
