@@ -1,5 +1,5 @@
 {
-  "name": "melza",
+  "name": "@elza/melza",
   "version": "0.0.1",
   "description": "轻量级框架",
   "main": "index.js",
