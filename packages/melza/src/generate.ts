@@ -1,20 +1,22 @@
-import { writeFileSync, mkdir } from 'fs';
-import path from 'path';
-import { DEFAULT_OUTDIR, DEFAULT_FRAMEWORK_NAME } from './constants';
-import { type IAppData, type IRoute } from './appData';
+import { writeFileSync, mkdir } from "fs";
+import path from "path";
+import { DEFAULT_OUTDIR, DEFAULT_FRAMEWORK_NAME } from "./constants";
+import { type IAppData, type IRoute } from "./appData";
+import { type IUserConfig } from "./userConfig";
 
-const prettier = require('../utils/prettier');
+const prettier = require("../utils/prettier");
 
-const getRoutesStr = (routes: IRoute[]) => {
-  let routesStr = '';
-  routes.forEach((route) => {
-    routesStr += `<Route path='${route.path}' element={<withLazyLoad(route.element) />}>`;
-    if (Array.isArray(route.routes) && route.routes.length > 0) {
-      routesStr += getRoutesStr(route.routes);
-    }
-    routesStr += '</Route>\n';
+const renderRoutes = (routes: IRoute[]): any => {
+  return routes.map((route) => {
+    const { path, element, routes = [] } = route;
+    return `
+      {
+        path: '${path}',
+        Component: withLazyLoad(React.lazy(() => import('${element}'))),
+        children: [${renderRoutes(routes)}],
+      }
+    `;
   });
-  return routesStr;
 };
 
 export const generateRoutes = ({
@@ -24,82 +26,106 @@ export const generateRoutes = ({
   appData: IAppData;
   routes: IRoute[];
 }) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     const content = `
     import React from 'react';
     import withLazyLoad from './utils/withLazyLoad';
 
     export function getRoutes() {
-      const routes = [
-        ${routes.map((route) => {
-          return `
-            { 
-              path: ${route.path},
-              element: React.lazy(() => import('${route.element}'))
-            },
-          `;
-        })}
-      ]
+      const routes = [${renderRoutes(routes)}]
+      return routes;
     }
   `;
+    const formatContent = await prettier.format(content, {
+      parser: "typescript",
+    });
     try {
       mkdir(appData.paths.absSrcPath, { recursive: true }, (err) => {
         if (err) {
           reject(err);
         }
         writeFileSync(
-          appData.paths.absSrcPath + '/index.tsx',
-          content,
-          'utf-8'
+          appData.paths.absSrcPath + "/routes.tsx",
+          formatContent,
+          "utf-8"
         );
         resolve({});
       });
     } catch (error) {
       reject({});
     }
+  });
+};
+
+const configStringify = (config: (string | RegExp)[]) => {
+  return config.map((item) => {
+    if (item instanceof RegExp) {
+      return item;
+    }
+    return `'${item}'`;
   });
 };
 
 export const generateEntry = ({
   appData,
-  routes,
+  userConfig,
 }: {
   appData: IAppData;
-  routes: IRoute[];
+  userConfig: IUserConfig;
 }) => {
   return new Promise(async (resolve, reject) => {
-    const routesStr = getRoutesStr(routes);
+    const { keepalive = [] } = userConfig;
     const content = `
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { HashRouter, Routes, Route } from 'react-router-dom';
-import KeepaliveLayout from '@elza/keepalive';
-import withLazyLoad from './utils/withLazyLoad';
+      import React from 'react';
+      import ReactDOM from 'react-dom/client';
+      import { HashRouter, Routes, Route } from 'react-router-dom';
+      import KeepaliveLayout from '@elza/keepalive';
+      import { getRoutes } from './routes';
 
-const App = () => {
-  return (
-    <KeepaliveLayout keepalive={['/home']}>
-      <HashRouter>
-        <Routes>
-          ${routesStr}
-        </Routes>
-      </HashRouter>
-    </KeepaliveLayout>
-  )
-}
+      interface IRoutes {
+        path: string;
+        Component: React.FC;
+        children?: IRoutes[];
+      }
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+      const App = () => {
+        const routes:IRoutes[] = getRoutes();
+        const renderRoutes = (_routes: IRoutes[]) => {
+          return _routes.map((route) => {
+            const { path, Component, children = [] } = route || {};
+            return (
+              <Route key={path} path={path} element={<Component />}>
+                {renderRoutes(children)}
+              </Route>
+            )
+          })
+        }
+        return (
+          <KeepaliveLayout keepalive={[${configStringify(keepalive)}]}>
+            <HashRouter>
+              <Routes>
+                {renderRoutes(routes)}
+              </Routes>
+            </HashRouter>
+          </KeepaliveLayout>
+        )
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
     `;
+    const formatContent = await prettier.format(content, {
+      parser: "typescript",
+    });
     try {
       mkdir(appData.paths.absSrcPath, { recursive: true }, (err) => {
         if (err) {
           reject(err);
         }
         writeFileSync(
-          appData.paths.absSrcPath + '/index.tsx',
-          content,
-          'utf-8'
+          appData.paths.absSrcPath + "/index.tsx",
+          formatContent,
+          "utf-8"
         );
         resolve({});
       });
@@ -109,15 +135,22 @@ root.render(<App />);
   });
 };
 
-export const generateHtml = ({ appData }: { appData: IAppData }) => {
+export const generateHtml = ({
+  appData,
+  userConfig,
+}: {
+  appData: IAppData;
+  userConfig: IUserConfig;
+}) => {
   return new Promise((resolve, reject) => {
+    const { title } = userConfig;
     const content = `
     <!DOCTYPE html>
         <html lang="en">
         
         <head>
             <meta charset="UTF-8">
-            <title>${appData.pkg.name ?? 'melza'}</title>
+            <title>${title ?? appData.pkg.name ?? "melza"}</title>
         </head>
         
         <body>
@@ -128,12 +161,12 @@ export const generateHtml = ({ appData }: { appData: IAppData }) => {
         </body>
         </html>`;
     try {
-      const htmlPath = path.resolve(appData.paths.absOutputPath, 'index.html');
+      const htmlPath = path.resolve(appData.paths.absOutputPath, "index.html");
       mkdir(path.dirname(htmlPath), { recursive: true }, (err) => {
         if (err) {
           reject(err);
         }
-        writeFileSync(htmlPath, content, 'utf-8');
+        writeFileSync(htmlPath, content, "utf-8");
         resolve({});
       });
     } catch (error) {

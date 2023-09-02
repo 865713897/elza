@@ -73,7 +73,7 @@ const filesToRoutes = (files: string[], pagesPath: string): IRoute[] => {
     let pagePath = path.basename(file, path.extname(file));
     return {
       path: `/${pagePath}`,
-      element: `React.lazy(() => import('@/pages/${pagePath}'))`,
+      element: `@/pages/${pagePath}`,
     };
   });
 };
@@ -92,7 +92,7 @@ export const getRoutes = ({ appData }: { appData: IAppData }) => {
     resolve([
       {
         path: '/',
-        element: `React.lazy(() => import('@/${DEFAULT_GLOBAL_LAYOUTS}'))`,
+        element: `@/${DEFAULT_GLOBAL_LAYOUTS}`,
         routes: routes,
       },
     ]);

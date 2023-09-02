@@ -1,26 +1,35 @@
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { HashRouter, Routes, Route } from "react-router-dom";
+import KeepaliveLayout from "@elza/keepalive";
+import { getRoutes } from "./routes";
 
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { HashRouter, Routes, Route } from 'react-router-dom';
-import KeepaliveLayout from '@elza/keepalive';
-import withLazyLoad from './utils/withLazyLoad';
-
-const App = () => {
-  return (
-    <KeepaliveLayout keepalive={['/home']}>
-      <HashRouter>
-        <Routes>
-          <Route path='/' element={withLazyLoad(route.element)}><Route path='/home' element={withLazyLoad(route.element)}></Route>
-<Route path='/me' element={withLazyLoad(route.element)}></Route>
-<Route path='/user' element={withLazyLoad(route.element)}></Route>
-</Route>
-
-        </Routes>
-      </HashRouter>
-    </KeepaliveLayout>
-  )
+interface IRoutes {
+  path: string;
+  Component: React.FC;
+  children?: IRoutes[];
 }
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const App = () => {
+  const routes: IRoutes[] = getRoutes();
+  const renderRoutes = (_routes: IRoutes[]) => {
+    return _routes.map((route) => {
+      const { path, Component, children = [] } = route || {};
+      return (
+        <Route key={path} path={path} element={<Component />}>
+          {renderRoutes(children)}
+        </Route>
+      );
+    });
+  };
+  return (
+    <KeepaliveLayout keepalive={["/home", /\/user/]}>
+      <HashRouter>
+        <Routes>{renderRoutes(routes)}</Routes>
+      </HashRouter>
+    </KeepaliveLayout>
+  );
+};
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<App />);
-    

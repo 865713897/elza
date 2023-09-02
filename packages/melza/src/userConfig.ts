@@ -4,8 +4,13 @@ import esbuild from 'esbuild';
 import { type IAppData } from './appData';
 import { DEFAULT_CONFIG_FILE } from './constants';
 
+export interface IUserConfig {
+  title?: string;
+  keepalive?: (string | RegExp)[]
+}
+
 export const getUserConfig = ({ appData }: { appData: IAppData }) => {
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async (resolve: (value: IUserConfig) => void, reject) => {
     let config = {};
     const configFile = path.resolve(
       appData.paths.absSrcPath,

@@ -22,7 +22,7 @@ const Hello = () => {
           Click Me! Add!
         </button>
       </p>
-      <Link to='/users'>go to users</Link>
+      <Link to='/user'>go to users</Link>
     </div>
   );
 };

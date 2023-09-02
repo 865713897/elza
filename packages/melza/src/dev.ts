@@ -5,7 +5,7 @@ import portfinder from 'portfinder';
 import path from 'path';
 import { getAppData, getRoutes } from './appData';
 import { getUserConfig } from './userConfig';
-import { generateEntry, generateHtml } from './generate';
+import { generateEntry, generateHtml, generateRoutes } from './generate';
 import { DEFAULT_ENTRY_POINT, DEFAULT_OUTDIR, DEFAULT_PORT } from './constants';
 
 export const dev = async () => {
@@ -37,11 +37,12 @@ export const dev = async () => {
     const routes = await getRoutes({ appData });
     // 获取用户配置
     const userConfig = await getUserConfig({ appData });
-    console.log(userConfig);
+    // 生产路由文件
+    await generateRoutes({ appData, routes });
     // 生成入口文件
-    await generateEntry({ appData, routes });
+    await generateEntry({ appData, userConfig });
     // 生成入口页面
-    await generateHtml({ appData });
+    await generateHtml({ appData, userConfig });
     try {
       const buildJS = await esbuild.context({
         entryPoints: [path.resolve(cwd, DEFAULT_ENTRY_POINT)],
