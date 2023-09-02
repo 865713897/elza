@@ -1,19 +1,16 @@
 import express from 'express';
+import fs from 'fs';
 import esbuild from 'esbuild';
 import portfinder from 'portfinder';
-import type { ServeOnRequestArgs } from 'esbuild';
 import path from 'path';
-import {
-  DEFAULT_ENTRY_POINT,
-  DEFAULT_OUTDIR,
-  DEFAULT_PLATFORM,
-  DEFAULT_PORT,
-  DEFAULT_HOST,
-  DEFAULT_BUILD_PORT,
-} from './constants';
+import { getAppData, getRoutes } from './appData';
+import { getUserConfig } from './userConfig';
+import { generateEntry, generateHtml } from './generate';
+import { DEFAULT_ENTRY_POINT, DEFAULT_OUTDIR, DEFAULT_PORT } from './constants';
 
 export const dev = async () => {
   const cwd = process.cwd();
+  const output = path.resolve(cwd, DEFAULT_OUTDIR);
   const target = 'chrome100,firefox100,safari15'.split(',');
   const port = await portfinder.getPortPromise({
     port: DEFAULT_PORT,
@@ -22,29 +19,33 @@ export const dev = async () => {
   const app = express();
   const esbuildOutput = path.resolve(cwd, DEFAULT_OUTDIR);
   app.use(`/${DEFAULT_OUTDIR}`, express.static(esbuildOutput));
-  app.get('/', (_req: any, res: any) => {
+  app.get('/', (_req: any, res: any, next: (err?: Error) => void) => {
     res.set('Content-Type', 'text/html');
-    res.send(`<!DOCTYPE html>
-        <html lang="en">
-        
-        <head>
-            <meta charset="UTF-8">
-            <title>melza</title>
-        </head>
-        
-        <body>
-            <div id="root">
-                <span>loading...</span>
-            </div>
-            <script src="/${DEFAULT_OUTDIR}/index.js"></script>
-        </body>
-        </html>`);
+    const htmlPath = path.join(output, 'index.html');
+    if (fs.existsSync(htmlPath)) {
+      fs.createReadStream(htmlPath).on('error', next).pipe(res);
+    } else {
+      next();
+    }
   });
   app.listen(port, async () => {
     console.log(`App listening at http://127.0.0.1:${port}`);
+    // 生命周期
+    // 获取元数据
+    const appData = await getAppData({ cwd });
+    // 获取routes配置
+    const routes = await getRoutes({ appData });
+    // 获取用户配置
+    const userConfig = await getUserConfig({ appData });
+    console.log(userConfig);
+    // 生成入口文件
+    await generateEntry({ appData, routes });
+    // 生成入口页面
+    await generateHtml({ appData });
     try {
       const buildJS = await esbuild.context({
         entryPoints: [path.resolve(cwd, DEFAULT_ENTRY_POINT)],
+        external: ['prettier'],
         format: 'esm',
         bundle: true,
         target,

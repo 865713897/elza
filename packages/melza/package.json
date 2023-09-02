@@ -2,7 +2,7 @@
   "name": "@elza/melza",
   "version": "0.0.1",
   "description": "轻量级框架",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "pnpm esbuild src/** --bundle --outdir=lib --platform=node --external:esbuild",
