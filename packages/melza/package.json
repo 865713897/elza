@@ -1,6 +1,6 @@
 {
   "name": "@elza/melza",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "轻量级框架",
   "main": "index.ts",
   "scripts": {
