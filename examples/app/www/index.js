@@ -2381,9 +2381,9 @@ var require_react_dom_development = __commonJS({
         if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
           __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
         }
-        var React5 = require_react();
+        var React4 = require_react();
         var Scheduler = require_scheduler();
-        var ReactSharedInternals = React5.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React4.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         var suppressWarning = false;
         function setSuppressWarning(newSuppressWarning) {
           {
@@ -2432,7 +2432,7 @@ var require_react_dom_development = __commonJS({
         var HostPortal = 4;
         var HostComponent = 5;
         var HostText = 6;
-        var Fragment5 = 7;
+        var Fragment2 = 7;
         var Mode = 8;
         var ContextConsumer = 9;
         var ContextProvider = 10;
@@ -3588,7 +3588,7 @@ var require_react_dom_development = __commonJS({
               return "DehydratedFragment";
             case ForwardRef:
               return getWrappedName$1(type, type.render, "ForwardRef");
-            case Fragment5:
+            case Fragment2:
               return "Fragment";
             case HostComponent:
               return type;
@@ -3988,7 +3988,7 @@ var require_react_dom_development = __commonJS({
           {
             if (props.value == null) {
               if (typeof props.children === "object" && props.children !== null) {
-                React5.Children.forEach(props.children, function(child) {
+                React4.Children.forEach(props.children, function(child) {
                   if (child == null) {
                     return;
                   }
@@ -12435,7 +12435,7 @@ var require_react_dom_development = __commonJS({
           }
         }
         var fakeInternalInstance = {};
-        var emptyRefsObject = new React5.Component().refs;
+        var emptyRefsObject = new React4.Component().refs;
         var didWarnAboutStateAssignmentForComponent;
         var didWarnAboutUninitializedState;
         var didWarnAboutGetSnapshotBeforeUpdateWithoutDidUpdate;
@@ -13259,7 +13259,7 @@ var require_react_dom_development = __commonJS({
             }
           }
           function updateFragment2(returnFiber, current2, fragment, lanes, key) {
-            if (current2 === null || current2.tag !== Fragment5) {
+            if (current2 === null || current2.tag !== Fragment2) {
               var created = createFiberFromFragment(fragment, returnFiber.mode, lanes, key);
               created.return = returnFiber;
               return created;
@@ -13662,7 +13662,7 @@ var require_react_dom_development = __commonJS({
               if (child.key === key) {
                 var elementType = element.type;
                 if (elementType === REACT_FRAGMENT_TYPE) {
-                  if (child.tag === Fragment5) {
+                  if (child.tag === Fragment2) {
                     deleteRemainingChildren(returnFiber, child.sibling);
                     var existing = useFiber(child, element.props.children);
                     existing.return = returnFiber;
@@ -13927,7 +13927,7 @@ var require_react_dom_development = __commonJS({
           /*  */
           2
         );
-        var Layout2 = (
+        var Layout = (
           /*    */
           4
         );
@@ -14639,10 +14639,10 @@ var require_react_dom_development = __commonJS({
           if ((currentlyRenderingFiber$1.mode & StrictEffectsMode) !== NoMode) {
             fiberFlags |= MountLayoutDev;
           }
-          return mountEffectImpl(fiberFlags, Layout2, create, deps);
+          return mountEffectImpl(fiberFlags, Layout, create, deps);
         }
         function updateLayoutEffect(create, deps) {
-          return updateEffectImpl(Update, Layout2, create, deps);
+          return updateEffectImpl(Update, Layout, create, deps);
         }
         function imperativeHandleEffect(create, ref) {
           if (typeof ref === "function") {
@@ -14680,7 +14680,7 @@ var require_react_dom_development = __commonJS({
           if ((currentlyRenderingFiber$1.mode & StrictEffectsMode) !== NoMode) {
             fiberFlags |= MountLayoutDev;
           }
-          return mountEffectImpl(fiberFlags, Layout2, imperativeHandleEffect.bind(null, create, ref), effectDeps);
+          return mountEffectImpl(fiberFlags, Layout, imperativeHandleEffect.bind(null, create, ref), effectDeps);
         }
         function updateImperativeHandle(ref, create, deps) {
           {
@@ -14689,7 +14689,7 @@ var require_react_dom_development = __commonJS({
             }
           }
           var effectDeps = deps !== null && deps !== void 0 ? deps.concat([ref]) : null;
-          return updateEffectImpl(Update, Layout2, imperativeHandleEffect.bind(null, create, ref), effectDeps);
+          return updateEffectImpl(Update, Layout, imperativeHandleEffect.bind(null, create, ref), effectDeps);
         }
         function mountDebugValue(value, formatterFn) {
         }
@@ -17837,7 +17837,7 @@ var require_react_dom_development = __commonJS({
               var _resolvedProps2 = workInProgress2.elementType === type ? _unresolvedProps2 : resolveDefaultProps(type, _unresolvedProps2);
               return updateForwardRef(current2, workInProgress2, type, _resolvedProps2, renderLanes2);
             }
-            case Fragment5:
+            case Fragment2:
               return updateFragment(current2, workInProgress2, renderLanes2);
             case Mode:
               return updateMode(current2, workInProgress2, renderLanes2);
@@ -18110,7 +18110,7 @@ var require_react_dom_development = __commonJS({
             case SimpleMemoComponent:
             case FunctionComponent:
             case ForwardRef:
-            case Fragment5:
+            case Fragment2:
             case Mode:
             case Profiler:
             case ContextConsumer:
@@ -18581,7 +18581,7 @@ var require_react_dom_development = __commonJS({
         };
         function safelyCallCommitHookLayoutEffectListMount(current2, nearestMountedAncestor) {
           try {
-            commitHookEffectListMount(Layout2, current2);
+            commitHookEffectListMount(Layout, current2);
           } catch (error2) {
             captureCommitPhaseError(current2, nearestMountedAncestor, error2);
           }
@@ -18756,7 +18756,7 @@ var require_react_dom_development = __commonJS({
                   {
                     if ((flags & Passive$1) !== NoFlags$1) {
                       markComponentPassiveEffectUnmountStarted(finishedWork);
-                    } else if ((flags & Layout2) !== NoFlags$1) {
+                    } else if ((flags & Layout) !== NoFlags$1) {
                       markComponentLayoutEffectUnmountStarted(finishedWork);
                     }
                   }
@@ -18774,7 +18774,7 @@ var require_react_dom_development = __commonJS({
                   {
                     if ((flags & Passive$1) !== NoFlags$1) {
                       markComponentPassiveEffectUnmountStopped();
-                    } else if ((flags & Layout2) !== NoFlags$1) {
+                    } else if ((flags & Layout) !== NoFlags$1) {
                       markComponentLayoutEffectUnmountStopped();
                     }
                   }
@@ -18795,7 +18795,7 @@ var require_react_dom_development = __commonJS({
                 {
                   if ((flags & Passive$1) !== NoFlags$1) {
                     markComponentPassiveEffectMountStarted(finishedWork);
-                  } else if ((flags & Layout2) !== NoFlags$1) {
+                  } else if ((flags & Layout) !== NoFlags$1) {
                     markComponentLayoutEffectMountStarted(finishedWork);
                   }
                 }
@@ -18814,7 +18814,7 @@ var require_react_dom_development = __commonJS({
                 {
                   if ((flags & Passive$1) !== NoFlags$1) {
                     markComponentPassiveEffectMountStopped();
-                  } else if ((flags & Layout2) !== NoFlags$1) {
+                  } else if ((flags & Layout) !== NoFlags$1) {
                     markComponentLayoutEffectMountStopped();
                   }
                 }
@@ -18822,7 +18822,7 @@ var require_react_dom_development = __commonJS({
                   var destroy = effect.destroy;
                   if (destroy !== void 0 && typeof destroy !== "function") {
                     var hookName = void 0;
-                    if ((effect.tag & Layout2) !== NoFlags) {
+                    if ((effect.tag & Layout) !== NoFlags) {
                       hookName = "useLayoutEffect";
                     } else if ((effect.tag & Insertion) !== NoFlags) {
                       hookName = "useInsertionEffect";
@@ -18893,12 +18893,12 @@ var require_react_dom_development = __commonJS({
                   if (finishedWork.mode & ProfileMode) {
                     try {
                       startLayoutEffectTimer();
-                      commitHookEffectListMount(Layout2 | HasEffect, finishedWork);
+                      commitHookEffectListMount(Layout | HasEffect, finishedWork);
                     } finally {
                       recordLayoutEffectDuration(finishedWork);
                     }
                   } else {
-                    commitHookEffectListMount(Layout2 | HasEffect, finishedWork);
+                    commitHookEffectListMount(Layout | HasEffect, finishedWork);
                   }
                 }
                 break;
@@ -19453,7 +19453,7 @@ var require_react_dom_development = __commonJS({
                       if (destroy !== void 0) {
                         if ((tag & Insertion) !== NoFlags$1) {
                           safelyCallDestroy(deletedFiber, nearestMountedAncestor, destroy);
-                        } else if ((tag & Layout2) !== NoFlags$1) {
+                        } else if ((tag & Layout) !== NoFlags$1) {
                           {
                             markComponentLayoutEffectUnmountStarted(deletedFiber);
                           }
@@ -19608,14 +19608,14 @@ var require_react_dom_development = __commonJS({
                 if (finishedWork.mode & ProfileMode) {
                   try {
                     startLayoutEffectTimer();
-                    commitHookEffectListUnmount(Layout2 | HasEffect, finishedWork, finishedWork.return);
+                    commitHookEffectListUnmount(Layout | HasEffect, finishedWork, finishedWork.return);
                   } catch (error2) {
                     captureCommitPhaseError(finishedWork, finishedWork.return, error2);
                   }
                   recordLayoutEffectDuration(finishedWork);
                 } else {
                   try {
-                    commitHookEffectListUnmount(Layout2 | HasEffect, finishedWork, finishedWork.return);
+                    commitHookEffectListUnmount(Layout | HasEffect, finishedWork, finishedWork.return);
                   } catch (error2) {
                     captureCommitPhaseError(finishedWork, finishedWork.return, error2);
                   }
@@ -19908,12 +19908,12 @@ var require_react_dom_development = __commonJS({
                 if (fiber.mode & ProfileMode) {
                   try {
                     startLayoutEffectTimer();
-                    commitHookEffectListUnmount(Layout2, fiber, fiber.return);
+                    commitHookEffectListUnmount(Layout, fiber, fiber.return);
                   } finally {
                     recordLayoutEffectDuration(fiber);
                   }
                 } else {
-                  commitHookEffectListUnmount(Layout2, fiber, fiber.return);
+                  commitHookEffectListUnmount(Layout, fiber, fiber.return);
                 }
                 break;
               }
@@ -20196,7 +20196,7 @@ var require_react_dom_development = __commonJS({
               case ForwardRef:
               case SimpleMemoComponent: {
                 try {
-                  commitHookEffectListMount(Layout2 | HasEffect, fiber);
+                  commitHookEffectListMount(Layout | HasEffect, fiber);
                 } catch (error2) {
                   captureCommitPhaseError(fiber, fiber.return, error2);
                 }
@@ -20237,7 +20237,7 @@ var require_react_dom_development = __commonJS({
               case ForwardRef:
               case SimpleMemoComponent: {
                 try {
-                  commitHookEffectListUnmount(Layout2 | HasEffect, fiber, fiber.return);
+                  commitHookEffectListUnmount(Layout | HasEffect, fiber, fiber.return);
                 } catch (error2) {
                   captureCommitPhaseError(fiber, fiber.return, error2);
                 }
@@ -22369,7 +22369,7 @@ var require_react_dom_development = __commonJS({
           return fiber;
         }
         function createFiberFromFragment(elements, mode, lanes, key) {
-          var fiber = createFiber(Fragment5, elements, key, mode);
+          var fiber = createFiber(Fragment2, elements, key, mode);
           fiber.lanes = lanes;
           return fiber;
         }
@@ -23513,7 +23513,7 @@ var require_react_jsx_runtime_development = __commonJS({
     if (true) {
       (function() {
         "use strict";
-        var React5 = require_react();
+        var React4 = require_react();
         var REACT_ELEMENT_TYPE = Symbol.for("react.element");
         var REACT_PORTAL_TYPE = Symbol.for("react.portal");
         var REACT_FRAGMENT_TYPE = Symbol.for("react.fragment");
@@ -23539,7 +23539,7 @@ var require_react_jsx_runtime_development = __commonJS({
           }
           return null;
         }
-        var ReactSharedInternals = React5.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React4.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         function error(format) {
           {
             {
@@ -24374,11 +24374,11 @@ var require_react_jsx_runtime_development = __commonJS({
             return jsxWithValidation(type, props, key, false);
           }
         }
-        var jsx6 = jsxWithValidationDynamic;
-        var jsxs6 = jsxWithValidationStatic;
+        var jsx3 = jsxWithValidationDynamic;
+        var jsxs2 = jsxWithValidationStatic;
         exports.Fragment = REACT_FRAGMENT_TYPE;
-        exports.jsx = jsx6;
-        exports.jsxs = jsxs6;
+        exports.jsx = jsx3;
+        exports.jsxs = jsxs2;
       })();
     }
   }
@@ -24397,7 +24397,6 @@ var require_jsx_runtime = __commonJS({
 });
 
 // src/index.tsx
-var import_react3 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
 // ../../node_modules/.pnpm/registry.npmmirror.com+react-router-dom@6.15.0_react-dom@18.2.0_react@18.2.0/node_modules/react-router-dom/dist/index.js
@@ -24707,12 +24706,12 @@ function flattenRoutes(routes, branches, parentsMeta, parentPath) {
   if (parentPath === void 0) {
     parentPath = "";
   }
-  let flattenRoute = (route, index, relativePath) => {
+  let flattenRoute = (route2, index, relativePath) => {
     let meta = {
-      relativePath: relativePath === void 0 ? route.path || "" : relativePath,
-      caseSensitive: route.caseSensitive === true,
+      relativePath: relativePath === void 0 ? route2.path || "" : relativePath,
+      caseSensitive: route2.caseSensitive === true,
       childrenIndex: index,
-      route
+      route: route2
     };
     if (meta.relativePath.startsWith("/")) {
       invariant(meta.relativePath.startsWith(parentPath), 'Absolute route path "' + meta.relativePath + '" nested under path ' + ('"' + parentPath + '" is not valid. An absolute child route path ') + "must start with the combined path of all its parent routes.");
@@ -24720,31 +24719,31 @@ function flattenRoutes(routes, branches, parentsMeta, parentPath) {
     }
     let path = joinPaths([parentPath, meta.relativePath]);
     let routesMeta = parentsMeta.concat(meta);
-    if (route.children && route.children.length > 0) {
+    if (route2.children && route2.children.length > 0) {
       invariant(
         // Our types know better, but runtime JS may not!
         // @ts-expect-error
-        route.index !== true,
+        route2.index !== true,
         "Index routes must not have child routes. Please remove " + ('all child routes from route path "' + path + '".')
       );
-      flattenRoutes(route.children, branches, routesMeta, path);
+      flattenRoutes(route2.children, branches, routesMeta, path);
     }
-    if (route.path == null && !route.index) {
+    if (route2.path == null && !route2.index) {
       return;
     }
     branches.push({
       path,
-      score: computeScore(path, route.index),
+      score: computeScore(path, route2.index),
       routesMeta
     });
   };
-  routes.forEach((route, index) => {
+  routes.forEach((route2, index) => {
     var _route$path;
-    if (route.path === "" || !((_route$path = route.path) != null && _route$path.includes("?"))) {
-      flattenRoute(route, index);
+    if (route2.path === "" || !((_route$path = route2.path) != null && _route$path.includes("?"))) {
+      flattenRoute(route2, index);
     } else {
-      for (let exploded of explodeOptionalSegments(route.path)) {
-        flattenRoute(route, index, exploded);
+      for (let exploded of explodeOptionalSegments(route2.path)) {
+        flattenRoute(route2, index, exploded);
       }
     }
   });
@@ -24822,13 +24821,13 @@ function matchRouteBranch(branch, pathname) {
     if (!match)
       return null;
     Object.assign(matchedParams, match.params);
-    let route = meta.route;
+    let route2 = meta.route;
     matches.push({
       // TODO: Can this as be avoided?
       params: matchedParams,
       pathname: joinPaths([matchedPathname, match.pathname]),
       pathnameBase: normalizePathname(joinPaths([matchedPathname, match.pathnameBase])),
-      route
+      route: route2
     });
     if (match.pathnameBase !== "/") {
       matchedPathname = joinPaths([matchedPathname, match.pathnameBase]);
@@ -25151,16 +25150,6 @@ function useNavigateUnstable() {
   }, [basename, navigator2, routePathnamesJson, locationPathname, dataRouterContext]);
   return navigate;
 }
-var OutletContext = /* @__PURE__ */ React.createContext(null);
-function useOutlet(context) {
-  let outlet = React.useContext(RouteContext).outlet;
-  if (outlet) {
-    return /* @__PURE__ */ React.createElement(OutletContext.Provider, {
-      value: context
-    }, outlet);
-  }
-  return outlet;
-}
 function useResolvedPath(to, _temp2) {
   let {
     relative
@@ -25432,13 +25421,13 @@ function useDataRouterState(hookName) {
   return state;
 }
 function useRouteContext(hookName) {
-  let route = React.useContext(RouteContext);
-  !route ? true ? invariant(false, getDataRouterConsoleError(hookName)) : invariant(false) : void 0;
-  return route;
+  let route2 = React.useContext(RouteContext);
+  !route2 ? true ? invariant(false, getDataRouterConsoleError(hookName)) : invariant(false) : void 0;
+  return route2;
 }
 function useCurrentRouteId(hookName) {
-  let route = useRouteContext(hookName);
-  let thisRoute = route.matches[route.matches.length - 1];
+  let route2 = useRouteContext(hookName);
+  let thisRoute = route2.matches[route2.matches.length - 1];
   !thisRoute.route.id ? true ? invariant(false, hookName + ' can only be used on routes that contain a unique "id"') : invariant(false) : void 0;
   return thisRoute.route.id;
 }
@@ -25594,7 +25583,7 @@ function createRoutesFromChildren(children, parentPath) {
     }
     !(element.type === Route) ? true ? invariant(false, "[" + (typeof element.type === "string" ? element.type : element.type.name) + "] is not a <Route> component. All component children of <Routes> must be a <Route> or <React.Fragment>") : invariant(false) : void 0;
     !(!element.props.index || !element.props.children) ? true ? invariant(false, "An index route cannot have child routes.") : invariant(false) : void 0;
-    let route = {
+    let route2 = {
       id: element.props.id || treePath.join("-"),
       caseSensitive: element.props.caseSensitive,
       element: element.props.element,
@@ -25611,9 +25600,9 @@ function createRoutesFromChildren(children, parentPath) {
       lazy: element.props.lazy
     };
     if (element.props.children) {
-      route.children = createRoutesFromChildren(element.props.children, treePath);
+      route2.children = createRoutesFromChildren(element.props.children, treePath);
     }
-    routes.push(route);
+    routes.push(route2);
   });
   return routes;
 }
@@ -26216,23 +26205,6 @@ function usePageHide(callback, options) {
 // ../../packages/keepalive/lib/index.js
 var import_jsx_runtime = __toESM(require_jsx_runtime());
 var import_react = __toESM(require_react());
-
-// ../../packages/keepalive/lib/PathMatcher.js
-var PathMatcher = class {
-  constructor(matchers) {
-    this.strategies = [];
-    this.strategies = matchers;
-  }
-  addMatcher(matcher) {
-    this.strategies.push(matcher);
-  }
-  match(item, path) {
-    return this.strategies.some((strategy) => strategy(item, path));
-  }
-};
-var PathMatcher_default = PathMatcher;
-
-// ../../packages/keepalive/lib/index.js
 var __rest = function(s, e) {
   var t = {};
   for (var p in s)
@@ -26249,39 +26221,6 @@ var KeepAliveContext = (0, import_react.createContext)({
   keepalive: [],
   keepElements: {}
 });
-var isKeepPath = (aliveList, path) => {
-  const pathMatchers = [
-    (item, path2) => path2 === item,
-    (item, path2) => item instanceof RegExp && item.test(path2),
-    (item, path2) => typeof item === "string" && item.toLowerCase() === path2
-  ];
-  const matcher = new PathMatcher_default(pathMatchers);
-  let isKeep = false;
-  for (const item of aliveList) {
-    isKeep = matcher.match(item, path);
-  }
-  return isKeep;
-};
-function useKeepOutlets() {
-  const location = useLocation();
-  const element = useOutlet();
-  const { keepalive, keepElements } = (0, import_react.useContext)(KeepAliveContext);
-  const isKeep = isKeepPath(keepalive, location.pathname);
-  if (isKeep) {
-    keepElements.current[location.pathname] = element;
-  }
-  return (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [Object.entries(keepElements.current).map(([pathname, element2]) => (0, import_jsx_runtime.jsx)("div", { style: {
-    height: "100%",
-    width: "100%",
-    position: "relative",
-    overflow: "hidden auto"
-  }, className: "rumtime-keep-alive-layout", hidden: !matchPath(location.pathname, pathname), children: element2 }, pathname)), (0, import_jsx_runtime.jsx)("div", { hidden: isKeep, style: {
-    height: "100%",
-    width: "100%",
-    position: "relative",
-    overflow: "hidden auto"
-  }, className: "rumtime-keep-alive-layout-no", children: !isKeep && element })] });
-}
 var KeepAliveLayout = (props) => {
   const { keepalive } = props, rest = __rest(props, ["keepalive"]);
   const keepElements = (0, import_react.useRef)({});
@@ -26292,77 +26231,26 @@ var KeepAliveLayout = (props) => {
 };
 var lib_default = KeepAliveLayout;
 
-// src/layouts/index.tsx
-var import_jsx_runtime2 = __toESM(require_jsx_runtime());
-var Layout = () => {
-  const { pathname } = useLocation();
-  const element = useKeepOutlets();
-  return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { children: [
-    /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { children: [
-      "\u5F53\u524D\u8DEF\u7531: ",
-      pathname
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { children: element })
-  ] });
-};
-var layouts_default = Layout;
-
-// src/pages/hello/index.tsx
+// src/utils/withLazyLoad.tsx
 var import_react2 = __toESM(require_react());
-var import_jsx_runtime3 = __toESM(require_jsx_runtime());
-var Hello = () => {
-  const [text, setText] = import_react2.default.useState("home");
-  return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_jsx_runtime3.Fragment, { children: [
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
-      "p",
-      {
-        onClick: () => {
-          setText("Hi!");
-        },
-        children: [
-          " ",
-          text,
-          " "
-        ]
-      }
-    ),
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Link, { to: "/users", children: "go to users" })
-  ] });
-};
-var hello_default = Hello;
-
-// src/pages/user/index.tsx
-var import_jsx_runtime4 = __toESM(require_jsx_runtime());
-var Users = () => {
-  return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { children: " Users " }),
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Link, { to: "/home", children: "go to home" })
-  ] });
-};
-var user_default = Users;
-
-// src/pages/me/index.tsx
-var import_jsx_runtime5 = __toESM(require_jsx_runtime());
-var Me = () => {
-  return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(import_jsx_runtime5.Fragment, { children: [
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { children: " Me " }),
-    " ",
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Link, { to: "/", children: "go Home" })
-  ] });
-};
-var me_default = Me;
+var import_jsx_runtime2 = __toESM(require_jsx_runtime());
+function withLazyLoad(LazyComponent) {
+  const LazyComponentWrapper = (props) => /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(import_react2.Suspense, { fallback: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { children: "Loading..." }), children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(LazyComponent, { ...props }) });
+  return LazyComponentWrapper;
+}
+var withLazyLoad_default = withLazyLoad;
 
 // src/index.tsx
-var import_jsx_runtime6 = __toESM(require_jsx_runtime());
-var root = import_client.default.createRoot(document.getElementById("root"));
+var import_jsx_runtime3 = __toESM(require_jsx_runtime());
 var App = () => {
-  return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(lib_default, { keepalive: ["/home"], children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Routes, { children: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(Route, { path: "/", element: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(layouts_default, {}), children: [
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Route, { path: "/home", element: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(hello_default, {}) }),
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Route, { path: "/users", element: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(user_default, {}) }),
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Route, { path: "/me", element: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(me_default, {}) })
+  return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(lib_default, { keepalive: ["/home"], children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Routes, { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(Route, { path: "/", element: withLazyLoad_default(route.element), children: [
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Route, { path: "/home", element: withLazyLoad_default(route.element) }),
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Route, { path: "/me", element: withLazyLoad_default(route.element) }),
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Route, { path: "/user", element: withLazyLoad_default(route.element) })
   ] }) }) }) });
 };
-root.render(import_react3.default.createElement(App));
+var root = import_client.default.createRoot(document.getElementById("root"));
+root.render(/* @__PURE__ */ (0, import_jsx_runtime3.jsx)(App, {}));
 /*! Bundled license information:
 
 react/cjs/react.development.js:

@@ -21,6 +21,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/node": "^20.5.7",
     "@types/react": "^18.2.21",
     "serve": "^14.2.1"
   }

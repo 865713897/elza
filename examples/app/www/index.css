@@ -1,0 +1,10 @@
+/* src/layouts/index.css */
+.melza-layout {
+  font-size: 24px;
+}
+
+/* src/pages/home/index.css */
+.melza-home-count {
+  color: goldenrod;
+  background-color: black;
+}

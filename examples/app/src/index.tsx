@@ -1,29 +1,26 @@
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { HashRouter, Routes, Route } from 'react-router-dom';
-import KeepAliveLayout from '@elza/keepalive';
-
-import Layout from './layouts';
-import Hello from './pages/hello';
-import Users from './pages/user';
-import Me from './pages/me';
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
+import KeepaliveLayout from '@elza/keepalive';
+import withLazyLoad from './utils/withLazyLoad';
 
 const App = () => {
   return (
-    <KeepAliveLayout keepalive={['/home']}>
+    <KeepaliveLayout keepalive={['/home']}>
       <HashRouter>
         <Routes>
-          <Route path='/' element={<Layout />}>
-            <Route path='/home' element={<Hello />} />
-            <Route path='/users' element={<Users />} />
-            <Route path='/me' element={<Me />} />
-          </Route>
+          <Route path='/' element={withLazyLoad(route.element)}><Route path='/home' element={withLazyLoad(route.element)}></Route>
+<Route path='/me' element={withLazyLoad(route.element)}></Route>
+<Route path='/user' element={withLazyLoad(route.element)}></Route>
+</Route>
+
         </Routes>
       </HashRouter>
-    </KeepAliveLayout>
-  );
-};
+    </KeepaliveLayout>
+  )
+}
 
-root.render(React.createElement(App));
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+    
