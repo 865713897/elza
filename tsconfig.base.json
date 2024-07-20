@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "target": "ESNext",
+    "esModuleInterop": true,
+    "outDir": "dist",
+    "declaration": true,
+    "isolatedModules": true,
+    "sourceMap": true,
+    "declarationMap": true,
+    "composite": false,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "checkJs": true,
+    "strict": false,
+    "skipLibCheck": true
+  }
+}

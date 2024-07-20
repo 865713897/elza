@@ -10,6 +10,7 @@ export interface IConfig {
   writeToDisk?: boolean | ((targetPath: string) => boolean);
   externals?: Record<string, string>;
   alias?: Record<string, string>;
+  pluginOptions?: Record<string, any>;
   [key: string]: any;
 }
 

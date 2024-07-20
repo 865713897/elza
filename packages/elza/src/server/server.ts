@@ -1,7 +1,7 @@
 import http from 'http';
 import express from 'express';
 import cors from 'cors';
-import logger from '@/utils/logger';
+import logger from '../utils/logger';
 import webpack, { Stats, Configuration } from 'webpack';
 import WebpackDevMiddleware from 'webpack-dev-middleware';
 import { getDevBanner } from '../utils/getDevBanner';

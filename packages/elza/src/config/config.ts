@@ -12,6 +12,7 @@ import { addCssRules } from './cssRules';
 
 import { addHtmlWebpackPlugin } from './htmlWebpackPlugin';
 import { addMiniCssExtractPlugin } from './miniCssExtractPlugin';
+import { addAutoRoutesPlugin } from './autoRoutesPlugin';
 
 interface IOpts {
   cwd: string;
@@ -40,7 +41,7 @@ export async function getConfig(opts: IOpts) {
   // entry
   config.entry = [opts.entry];
   if (isDev && opts.hmr) {
-    config.entry.unshift(require.resolve('../client/client.js'));
+    config.entry.unshift(require.resolve('../../client/client/client.js'));
   }
 
   // devtool
@@ -93,6 +94,7 @@ export async function getConfig(opts: IOpts) {
   config.plugins?.push(new BetterInfo({}));
   await addHtmlWebpackPlugin(applyOpts);
   await addMiniCssExtractPlugin(applyOpts);
+  await addAutoRoutesPlugin(applyOpts);
 
   return config;
 }

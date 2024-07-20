@@ -1,17 +1,17 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import Home from './pages/home';
+import Router from './router';
 
 const root = createRoot(document.getElementById('root'));
 
 function renderApp() {
-  root.render(<Home />);
+  root.render(<Router />);
 }
 
 renderApp();
 
 if (module.hot) {
-  module.hot.accept('./pages/home', () => {
+  module.hot.accept('./router', () => {
     renderApp();
   });
 }

@@ -73,8 +73,8 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0
       chalk:
-        specifier: ^5.3.0
-        version: 5.3.0
+        specifier: ^4.1.2
+        version: 4.1.2
       css-loader:
         specifier: ^7.1.2
         version: 7.1.2(webpack@5.93.0(@swc/core@1.6.6)(esbuild@0.23.0)(webpack-cli@5.1.4))
@@ -106,8 +106,8 @@ importers:
         specifier: ^14.2.1
         version: 14.2.1(sass@1.77.8)(webpack@5.93.0(@swc/core@1.6.6)(esbuild@0.23.0)(webpack-cli@5.1.4))
       strip-ansi:
-        specifier: ^7.1.0
-        version: 7.1.0
+        specifier: ^6.0.0
+        version: 6.0.1
       style-loader:
         specifier: ^4.0.0
         version: 4.0.0(webpack@5.93.0(@swc/core@1.6.6)(esbuild@0.23.0)(webpack-cli@5.1.4))
@@ -138,6 +138,9 @@ importers:
       webpack-hot-middleware:
         specifier: ^2.26.1
         version: 2.26.1
+      webpack-plugin-auto-routes:
+        specifier: ^1.0.3
+        version: 1.0.3(webpack@5.93.0(@swc/core@1.6.6)(esbuild@0.23.0)(webpack-cli@5.1.4))
       webpack-plugin-better-info:
         specifier: ^0.0.2
         version: 0.0.2(webpack@5.93.0(@swc/core@1.6.6)(esbuild@0.23.0)(webpack-cli@5.1.4))
@@ -1412,10 +1415,6 @@ packages:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
     engines: {node: '>=10'}
 
-  chalk@5.3.0:
-    resolution: {integrity: sha512-dLitG79d+GV1Nb/VYcCDFivJeK1hiukt9QjRNVOsUtTy1rR1YJsmpGGTZ3qJos+uw7WmWF4wUwBd9jxjocFC2w==}
-    engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
-
   changelogen@0.5.5:
     resolution: {integrity: sha512-IzgToIJ/R9NhVKmL+PW33ozYkv53bXvufDNUSH3GTKXq1iCHGgkbgbtqEWbo8tnWNnt7nPDpjL8PwSG2iS8RVw==}
     hasBin: true
@@ -1673,8 +1672,8 @@ packages:
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
 
-  electron-to-chromium@1.4.830:
-    resolution: {integrity: sha512-TrPKKH20HeN0J1LHzsYLs2qwXrp8TF4nHdu4sq61ozGbzMpWhI7iIOPYPPkxeq1azMT9PZ8enPFcftbs/Npcjg==}
+  electron-to-chromium@1.4.832:
+    resolution: {integrity: sha512-cTen3SB0H2SGU7x467NRe1eVcQgcuS6jckKfWJHia2eo0cHIGOqHoAxevIYZD4eRHcWjkvFzo93bi3vJ9W+1lA==}
 
   emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
@@ -3139,6 +3138,11 @@ packages:
     resolution: {integrity: sha512-+4zXKdx7UnO+1jaN4l2lHVD+mFvnlZQP/6ljaJVb4SZiwIKeUnrT5l0gkT8z+n4hKpC+jpOv6O9R+gLtag7pSA==}
     engines: {node: '>=10.0.0'}
 
+  webpack-plugin-auto-routes@1.0.3:
+    resolution: {integrity: sha512-oQBoIGw9WOmgyMlrb2QJonIqyKVfyMytHDgJc6EjkzV5sbUM5Xx1C2W8EyBPtTfCFCQiHUaRmRlfFEPLAZRzXA==}
+    peerDependencies:
+      webpack: '>=5.91.0'
+
   webpack-plugin-better-info@0.0.2:
     resolution: {integrity: sha512-z+Ib6i2l+sZRfZwhahLjFAihRczFYs7e97DNYb5uk9+gdPZCMhTUIMfnIrhLaAEYFCw1UxCxx6vbasRqz5UARg==}
     peerDependencies:
@@ -4584,7 +4588,7 @@ snapshots:
   browserslist@4.23.2:
     dependencies:
       caniuse-lite: 1.0.30001642
-      electron-to-chromium: 1.4.830
+      electron-to-chromium: 1.4.832
       node-releases: 2.0.17
       update-browserslist-db: 1.1.0(browserslist@4.23.2)
 
@@ -4644,8 +4648,6 @@ snapshots:
     dependencies:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
-
-  chalk@5.3.0: {}
 
   changelogen@0.5.5:
     dependencies:
@@ -4904,7 +4906,7 @@ snapshots:
 
   ee-first@1.1.1: {}
 
-  electron-to-chromium@1.4.830: {}
+  electron-to-chromium@1.4.832: {}
 
   emoji-regex@8.0.0: {}
 
@@ -6380,6 +6382,11 @@ snapshots:
       clone-deep: 4.0.1
       flat: 5.0.2
       wildcard: 2.0.1
+
+  webpack-plugin-auto-routes@1.0.3(webpack@5.93.0(@swc/core@1.6.6)(esbuild@0.23.0)(webpack-cli@5.1.4)):
+    dependencies:
+      chokidar: 3.6.0
+      webpack: 5.93.0(@swc/core@1.6.6)(esbuild@0.23.0)(webpack-cli@5.1.4)
 
   webpack-plugin-better-info@0.0.2(webpack@5.93.0(@swc/core@1.6.6)(esbuild@0.23.0)(webpack-cli@5.1.4)):
     dependencies:
