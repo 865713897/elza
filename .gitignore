@@ -1,0 +1,8 @@
+/node_modules
+/examples/*/node_modules
+/examples/*/.swc
+/examples/*/dist
+
+/packages/*/node_modules
+
+.DS_Store

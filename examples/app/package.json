@@ -1,0 +1,13 @@
+{
+  "name": "@examples/app",
+  "scripts": {
+    "start": "elza dev",
+    "build": "elza build"
+  },
+  "dependencies": {
+    "elza": "workspace:*",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.23.1"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "pnpm -r --filter ./packages/** run build",
+    "dev": "pnpm -r --filter ./packages --parallel run dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/865713897/elza.git"
+  },
+  "devDependencies": {
+    "changelogen": "^0.5.5",
+    "esbuild": "^0.23.0",
+    "typescript": "^5.5.3"
+  }
+}
