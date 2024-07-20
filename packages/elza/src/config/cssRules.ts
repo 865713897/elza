@@ -7,7 +7,7 @@ interface IOpts {
 }
 
 export async function addCssRules(opts: IOpts) {
-  const { config } = opts;
+  const { config, isDev } = opts;
 
   const rules = [
     {
@@ -32,22 +32,22 @@ export async function addCssRules(opts: IOpts) {
       newRule.oneOf = [
         {
           resourceQuery: /css_modules/,
-          use: getLoaders(loader, true),
+          use: getLoaders(loader, true, isDev),
         },
         {
-          use: getLoaders(loader, false),
+          use: getLoaders(loader, false, isDev),
         },
       ];
     } else {
-      newRule.use = getLoaders(loader, false);
+      newRule.use = getLoaders(loader, false, isDev);
     }
     config.module?.rules?.push(newRule);
   });
 }
 
-function getLoaders(loader: string | undefined, autoCssModules: boolean) {
+function getLoaders(loader: string | undefined, autoCssModules: boolean, isDev: boolean) {
   const use = [
-    require.resolve('style-loader'),
+    isDev ? require.resolve('style-loader') : require.resolve('mini-css-extract-plugin/dist/loader'),
     require.resolve('css-loader'),
     {
       loader: require.resolve('postcss-loader'),

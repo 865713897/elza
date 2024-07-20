@@ -4,6 +4,12 @@ export enum Env {
 }
 
 export interface IConfig {
+  transpiler?: 'babel' | 'swc' | 'esbuild';
+  template?: string;
+  publicPath?: string;
+  writeToDisk?: boolean | ((targetPath: string) => boolean);
+  externals?: Record<string, string>;
+  alias?: Record<string, string>;
   [key: string]: any;
 }
 

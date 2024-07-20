@@ -3,22 +3,26 @@ import { resolve, join } from 'path';
 import { build } from 'esbuild';
 import BetterInfo from 'webpack-plugin-better-info';
 import { tryPaths } from '../utils/tryPath';
+import { getValidPaths } from '../utils/getValidPaths';
 import { DEFAULT_OUTPUT_PATH } from '../constants';
 import { Env, IConfig } from '../types';
 
 import { addJavascriptRules } from './jsRules';
 import { addCssRules } from './cssRules';
 
+import { addHtmlWebpackPlugin } from './htmlWebpackPlugin';
+import { addMiniCssExtractPlugin } from './miniCssExtractPlugin';
+
 interface IOpts {
   cwd: string;
   env: Env;
   entry: string;
   hmr: boolean;
+  userConfig: IConfig;
 }
 
 export async function getConfig(opts: IOpts) {
-  const userConfig = await getUserConfig(opts.cwd);
-
+  const { userConfig } = opts;
   const isDev = opts.env === Env.development;
   const config: Configuration = {};
 
@@ -43,7 +47,7 @@ export async function getConfig(opts: IOpts) {
   config.devtool = isDev ? 'eval-source-map' : false;
 
   // output
-  const filename = isDev ? '[name].js' : 'static/js/[contenthash:8].js';
+  const filename = isDev ? '[name].js' : 'static/js/[name].[contenthash:8].js';
   const absOutputPath = resolve(opts.cwd, DEFAULT_OUTPUT_PATH);
   config.output = { filename, path: absOutputPath, clean: true };
 
@@ -51,18 +55,32 @@ export async function getConfig(opts: IOpts) {
   config.resolve = {
     symlinks: true,
     modules: ['node_modules'],
-    alias: {},
+    alias: {
+      '@/': join(opts.cwd, 'src/'),
+      '@components': join(opts.cwd, 'src/components/'),
+      ...(userConfig.alias || {}),
+    },
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.cjs', '.mjs', '.json', '.wasm'],
   };
 
   // externals
-  config.externals = {};
+  config.externals = userConfig.externals || {};
 
   // target
   config.target = ['web', 'es5'];
 
   // cache
-  config.cache = { type: 'filesystem' };
+  config.cache = {
+    type: 'filesystem',
+    buildDependencies: {
+      config: getValidPaths([
+        join(opts.cwd, 'elza.config.js'),
+        join(opts.cwd, 'elza.config.ts'),
+        join(opts.cwd, 'package.json'),
+      ]),
+    },
+    cacheDirectory: join(opts.cwd, 'node_modules/.elza/cache'),
+  };
 
   // rules
   config.module = { rules: [] };
@@ -73,11 +91,13 @@ export async function getConfig(opts: IOpts) {
   config.plugins = [];
   config.plugins?.push(new webpack.HotModuleReplacementPlugin());
   config.plugins?.push(new BetterInfo({}));
+  await addHtmlWebpackPlugin(applyOpts);
+  await addMiniCssExtractPlugin(applyOpts);
 
-  return { webpackConfig: config, userConfig };
+  return config;
 }
 
-async function getUserConfig(cwd: string): Promise<IConfig> {
+export async function getUserConfig(cwd: string): Promise<IConfig> {
   const configFile = tryPaths([join(cwd, 'elza.config.js'), join(cwd, 'elza.config.ts')]);
   let config = {};
   const outputPath = resolve(cwd, 'node_modules/.elza/elza.config.js');
@@ -91,7 +111,16 @@ async function getUserConfig(cwd: string): Promise<IConfig> {
       platform: 'node',
     });
     config = require(outputPath).default;
+    config = resolveConfig(config, cwd);
   }
 
+  return config;
+}
+
+function resolveConfig(config: IConfig, cwd: string) {
+  const { template } = config;
+  if (template) {
+    config.template = config.template?.replace(resolve(cwd, 'node_modules/.elza'), '');
+  }
   return config;
 }

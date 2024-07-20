@@ -11,6 +11,7 @@ function getPingUrl() {
   const url = location;
   return `${url.protocol}//${url.host}/__elza_ping`;
 }
+console.log("[webpack] connecting...");
 if ("WebSocket" in window) {
   let handleMessage = function(payload) {
     switch (payload.type) {
@@ -89,7 +90,7 @@ if ("WebSocket" in window) {
     if (pingTimer) clearInterval(pingTimer);
     console.info("[webpack] Dev server disconnected. Polling for restart...");
     await waitForSuccessfulPing();
-    window.location.reload();
+    location.reload();
   });
 }
 var handleMessage2;

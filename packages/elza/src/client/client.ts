@@ -13,6 +13,8 @@ function getPingUrl() {
   return `${url.protocol}//${url.host}/__elza_ping`;
 }
 
+console.log('[webpack] connecting...');
+
 if ('WebSocket' in window) {
   const socket = new WebSocket(getSocketUrl(), 'elza-hmr');
   let pingTimer: NodeJS.Timeout | null = null;
@@ -45,7 +47,7 @@ if ('WebSocket' in window) {
     if (pingTimer) clearInterval(pingTimer);
     console.info('[webpack] Dev server disconnected. Polling for restart...');
     await waitForSuccessfulPing();
-    window.location.reload();
+    location.reload();
   });
 
   // 处理消息

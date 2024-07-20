@@ -1,3 +1,4 @@
-import path from 'path';
-
-export default { transpiler: 'swc', template: path.resolve(__dirname, './public/index.html') };
+export default {
+  transpiler: 'swc',
+  template: './public/index.html',
+};

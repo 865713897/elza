@@ -1,8 +1,9 @@
 import esbuild from 'esbuild';
 import path from 'path';
 import { writeFileSync } from 'fs';
-import { getConfig } from './config/config';
+import { getConfig, getUserConfig } from './config/config';
 import { generateGradientContent } from './utils/generateGradientColor';
+import logger from './utils/logger';
 import { Env } from './types';
 import { createServer } from './server/server';
 
@@ -13,16 +14,17 @@ interface IOpts {
 
 export async function dev(opts: IOpts) {
   const title = generateGradientContent('elza v1.0.0', ['#94FFEB', '#00A97B']);
-  console.log(`  ${title}\n`);
-  const { webpackConfig, userConfig } = await getConfig({
+  logger.title(title);
+  const userConfig = await getUserConfig(opts.cwd);
+  const webpackConfig = await getConfig({
     cwd: opts.cwd,
     entry: opts.entry,
     env: Env.development,
     hmr: true,
+    userConfig,
   });
-  console.log(userConfig, 'userConfig');
-  
-  createServer({ webpackConfig, cwd: opts.cwd });
+
+  createServer({ webpackConfig, cwd: opts.cwd, userConfig });
 }
 
 // 启动之前进行依赖预编译

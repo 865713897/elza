@@ -24,6 +24,8 @@ esbuild
       'autoprefixer',
       'babel-plugin-auto-css-module',
       'swc-plugin-auto-css-module',
+      'html-webpack-plugin',
+      'mini-css-extract-plugin',
       '../client/client.js',
     ],
   })

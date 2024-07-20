@@ -1,34 +1,51 @@
-import chalk from "chalk";
-import path from "path";
-import http from "http";
-import express from "express";
-import webpack, { Stats, Configuration } from "webpack";
-import WebpackDevMiddleware from "webpack-dev-middleware";
-import { getDevBanner } from "../utils/getDevBanner";
-import { MESSAGE_TYPE } from "../constants";
-import { createWebSocketServer } from "./ws";
+import http from 'http';
+import express from 'express';
+import cors from 'cors';
+import logger from '@/utils/logger';
+import webpack, { Stats, Configuration } from 'webpack';
+import WebpackDevMiddleware from 'webpack-dev-middleware';
+import { getDevBanner } from '../utils/getDevBanner';
+import { MESSAGE_TYPE } from '../constants';
+import { createWebSocketServer } from './ws';
+import { IConfig } from '../types';
 
 interface IOpts {
   webpackConfig: Configuration;
   cwd: string;
+  userConfig: IConfig;
+  port?: number;
 }
 
 export const createServer = (opts: IOpts) => {
-  const { webpackConfig } = opts;
+  const { webpackConfig, userConfig } = opts;
   let ws: ReturnType<typeof createWebSocketServer>;
   const app = express();
   const compiler = webpack({
     ...webpackConfig,
   });
 
-  app.use(WebpackDevMiddleware(compiler, { publicPath: "/", stats: "none" }));
+  app.use(
+    cors({
+      origin: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD', 'PATCH'],
+      credentials: true,
+    }),
+  );
+
+  app.use(
+    WebpackDevMiddleware(compiler, {
+      publicPath: userConfig.publicPath || '/',
+      writeToDisk: userConfig.writeToDisk,
+      stats: 'none',
+    }),
+  );
 
   // hmr
   let stats: any;
-  compiler.hooks.invalid.tap("server", () => {
+  compiler.hooks.invalid.tap('server', () => {
     sendMessage(MESSAGE_TYPE.invalid);
   });
-  compiler.hooks.done.tap("server", (_stats: Stats) => {
+  compiler.hooks.done.tap('server', (_stats: Stats) => {
     stats = _stats;
     sendStats(getStats(stats));
   });
@@ -37,11 +54,7 @@ export const createServer = (opts: IOpts) => {
     (sender || ws)?.send(JSON.stringify({ type, data }));
   };
 
-  function sendStats(
-    stats: webpack.StatsCompilation,
-    force?: boolean,
-    sender?: any
-  ) {
+  function sendStats(stats: webpack.StatsCompilation, force?: boolean, sender?: any) {
     const shouldEmit =
       !force &&
       stats &&
@@ -80,28 +93,26 @@ export const createServer = (opts: IOpts) => {
     });
   }
 
-  app.get("/__elza_ping", (_, res) => {
-    res.send("pong");
-  });
-
-  app.get("/", (_, res) => {
-    res.sendFile(path.resolve(opts.cwd, "public/index.html"));
+  app.use('/__elza_ping', (_, res) => {
+    res.send('pong');
   });
 
   const server = http.createServer(app);
 
   ws = createWebSocketServer(server);
 
-  ws.wss.on("connection", (socket) => {
+  ws.wss.on('connection', (socket) => {
     if (stats) {
       sendStats(getStats(stats), false, socket);
     }
   });
 
-  server.listen(3000, () => {
+  const port = opts.port || 3000;
+
+  server.listen(port, () => {
     const { before, main, after } = getDevBanner();
     console.log(before);
-    console.log(`${chalk.green("ready")} - ${main}`);
+    logger.ready(main);
     console.log(after);
   });
 };
