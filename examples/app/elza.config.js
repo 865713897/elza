@@ -1,11 +1,6 @@
 import { defineConfig } from 'elza';
 
-export default {
+export default defineConfig({
   transpiler: 'swc',
-  template: './public/index.html',
-  // pluginOptions: {
-  //   'webpack-plugin-auto-routes': {
-  //     onlyRoutes: false,
-  //   },
-  // },
-};
+  htmlTemplate: './public/index.html',
+});

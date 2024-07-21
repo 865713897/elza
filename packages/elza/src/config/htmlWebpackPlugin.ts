@@ -11,10 +11,10 @@ interface IOpts {
 export async function addHtmlWebpackPlugin(opts: IOpts) {
   const { config, userConfig } = opts;
   let pluginOptions: HtmlWebpackPlugin.Options = { filename: 'index.html' };
-  if (userConfig.template) {
+  if (userConfig.htmlTemplate) {
     pluginOptions = {
       ...pluginOptions,
-      template: userConfig.template,
+      template: userConfig.htmlTemplate,
     };
   } else {
     pluginOptions = {

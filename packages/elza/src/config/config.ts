@@ -45,7 +45,7 @@ export async function getConfig(opts: IOpts) {
   }
 
   // devtool
-  config.devtool = isDev ? 'eval-source-map' : false;
+  config.devtool = isDev ? userConfig.devtool || 'eval-source-map' : false;
 
   // output
   const filename = isDev ? '[name].js' : 'static/js/[name].[contenthash:8].js';
@@ -120,9 +120,9 @@ export async function getUserConfig(cwd: string): Promise<IConfig> {
 }
 
 function resolveConfig(config: IConfig, cwd: string) {
-  const { template } = config;
-  if (template) {
-    config.template = config.template?.replace(resolve(cwd, 'node_modules/.elza'), '');
+  const { htmlTemplate } = config;
+  if (htmlTemplate) {
+    config.htmlTemplate = config.htmlTemplate?.replace(resolve(cwd, 'node_modules/.elza'), '');
   }
   return config;
 }

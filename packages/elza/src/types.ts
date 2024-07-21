@@ -1,3 +1,5 @@
+import { IAutoRoutes } from 'webpack-plugin-auto-routes';
+
 export enum Env {
   development = 'development',
   production = 'production',
@@ -5,11 +7,13 @@ export enum Env {
 
 export interface IConfig {
   transpiler?: 'babel' | 'swc' | 'esbuild';
-  template?: string;
+  htmlTemplate?: string;
   publicPath?: string;
+  devtool?: string | false,
   writeToDisk?: boolean | ((targetPath: string) => boolean);
   externals?: Record<string, string>;
   alias?: Record<string, string>;
+  autoRoutes?: IAutoRoutes;
   pluginOptions?: Record<string, any>;
   [key: string]: any;
 }
