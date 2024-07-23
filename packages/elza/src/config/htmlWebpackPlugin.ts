@@ -1,10 +1,10 @@
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import { Configuration } from 'webpack';
+import Config from '../../compiled/webpack-5-chain';
 import { IConfig } from '../types';
 
 interface IOpts {
   cwd: string;
-  config: Configuration;
+  config: Config;
   userConfig: IConfig;
 }
 
@@ -33,5 +33,5 @@ export async function addHtmlWebpackPlugin(opts: IOpts) {
       `,
     };
   }
-  config.plugins?.push(new HtmlWebpackPlugin(pluginOptions));
+  config.plugin('html-webpack-plugin').use(new HtmlWebpackPlugin(pluginOptions));
 }

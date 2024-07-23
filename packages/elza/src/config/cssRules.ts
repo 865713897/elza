@@ -1,7 +1,7 @@
-import { Configuration } from 'webpack';
+import Config from '../../compiled/webpack-5-chain';
 
 interface IOpts {
-  config: Configuration;
+  config: Config;
   cwd: string;
   isDev: boolean;
 }
@@ -11,68 +11,64 @@ export async function addCssRules(opts: IOpts) {
 
   const rules = [
     {
+      name: 'css',
       test: /\.css$/,
+      openCssModules: false,
     },
     {
+      name: 'scss',
       test: /\.scss$/,
       loader: require.resolve('sass-loader'),
-      autoCssModules: true,
+      openCssModules: true,
     },
     {
+      name: 'less',
       test: /\.less$/,
       loader: require.resolve('less-loader'),
-      autoCssModules: true,
+      openCssModules: true,
     },
   ];
 
-  rules.forEach((rule) => {
-    const { test, loader, autoCssModules = false } = rule;
-    const newRule: { test: RegExp; oneOf?: any[]; use?: any[] } = { test };
-    if (autoCssModules) {
-      newRule.oneOf = [
-        {
-          resourceQuery: /css_modules/,
-          use: getLoaders(loader, true, isDev),
-        },
-        {
-          use: getLoaders(loader, false, isDev),
-        },
-      ];
-    } else {
-      newRule.use = getLoaders(loader, false, isDev);
+  for (const { name, test, loader, openCssModules } of rules) {
+    const rule = config.module.rule(name);
+    const nestRulesConfig = [
+      openCssModules && {
+        nestRule: rule
+          .test(test)
+          .oneOf('css-modules')
+          .resourceQuery(/css_modules/),
+        isAutoCssModules: true,
+      },
+      {
+        nestRule: rule.test(test).oneOf('normal').sideEffects(true),
+        isAutoCssModules: false,
+      },
+    ].filter(Boolean);
+    for (const { nestRule, isAutoCssModules } of nestRulesConfig) {
+      if (isDev) {
+        nestRule.use('style-loader').loader(require.resolve('style-loader'));
+      } else {
+        nestRule
+          .use('mini-css-extract-loader')
+          .loader(require.resolve('mini-css-extract-plugin/dist/loader'));
+      }
+      nestRule
+        .use('css-loader')
+        .loader(require.resolve('css-loader'))
+        .options({
+          modules: isAutoCssModules
+            ? {
+                localIdentName: '[name]__[local]-[hash:base64:5]',
+              }
+            : undefined,
+        });
+      nestRule
+        .use('postcss-loader')
+        .loader(require.resolve('postcss-loader'))
+        .options({ postcssOptions: { plugins: [require.resolve('autoprefixer')] } });
+      if (loader) {
+        nestRule.use(loader).loader(loader);
+      }
     }
-    config.module?.rules?.push(newRule);
-  });
-}
-
-function getLoaders(loader: string | undefined, autoCssModules: boolean, isDev: boolean) {
-  const use = [
-    isDev ? require.resolve('style-loader') : require.resolve('mini-css-extract-plugin/dist/loader'),
-    require.resolve('css-loader'),
-    {
-      loader: require.resolve('postcss-loader'),
-      options: {
-        postcssOptions: {
-          plugins: [require.resolve('autoprefixer')],
-        },
-      },
-    },
-    loader && {
-      loader,
-      options: {},
-    },
-  ].filter(Boolean);
-
-  if (autoCssModules) {
-    use[1] = {
-      loader: require.resolve('css-loader'),
-      options: {
-        modules: {
-          localIdentName: '[name]__[local]-[hash:base64:5]',
-        },
-      },
-    } as any;
   }
-
-  return use;
 }

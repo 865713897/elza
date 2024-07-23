@@ -23,8 +23,8 @@ export async function dev(opts: IOpts) {
     hmr: true,
     userConfig,
   });
-
-  createServer({ webpackConfig, cwd: opts.cwd, userConfig });
+  
+  await createServer({ webpackConfig, cwd: opts.cwd, userConfig });
 }
 
 // 启动之前进行依赖预编译

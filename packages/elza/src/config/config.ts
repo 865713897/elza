@@ -2,6 +2,7 @@ import webpack, { Configuration } from 'webpack';
 import { resolve, join } from 'path';
 import { build } from 'esbuild';
 import BetterInfo from 'webpack-plugin-better-info';
+import Config from '../../compiled/webpack-5-chain';
 import { tryPaths } from '../utils/tryPath';
 import { getValidPaths } from '../utils/getValidPaths';
 import { DEFAULT_OUTPUT_PATH } from '../constants';
@@ -25,7 +26,7 @@ interface IOpts {
 export async function getConfig(opts: IOpts) {
   const { userConfig } = opts;
   const isDev = opts.env === Env.development;
-  const config: Configuration = {};
+  const config = new Config();
 
   const applyOpts = {
     config,
@@ -35,44 +36,59 @@ export async function getConfig(opts: IOpts) {
   };
 
   // mode
-  config.mode = isDev ? 'development' : 'production';
-  config.stats = 'none';
+  config.mode(opts.env);
+  config.stats('none');
 
   // entry
-  config.entry = [opts.entry];
+  const entry = config.entry('main');
   if (isDev && opts.hmr) {
-    config.entry.unshift(require.resolve('../../client/client/client.js'));
+    entry.add(require.resolve('../../client/client/client.js'));
   }
+  entry.add(opts.entry);
 
   // devtool
-  config.devtool = isDev ? userConfig.devtool || 'eval-source-map' : false;
+  config.devtool(
+    isDev
+      ? userConfig.devtool === false
+        ? false
+        : userConfig.devtool || 'eval-source-map'
+      : false,
+  );
 
   // output
   const filename = isDev ? '[name].js' : 'static/js/[name].[contenthash:8].js';
+  const chunkFilename = isDev ? '[name].async.js' : 'static/js/[name].[contenthash:8].async.js';
   const absOutputPath = resolve(opts.cwd, DEFAULT_OUTPUT_PATH);
-  config.output = { filename, path: absOutputPath, clean: true };
+  config.output
+    .path(absOutputPath)
+    .filename(filename)
+    .chunkFilename(chunkFilename)
+    .publicPath('/')
+    .pathinfo(isDev)
+    .set('assetModuleFilename', 'static/[name].[hash:8][ext')
+    .set('hashFunction', 'xxhash64')
+    .clean(true);
 
   // resolve
-  config.resolve = {
-    symlinks: true,
-    modules: ['node_modules'],
-    alias: {
-      '@/': join(opts.cwd, 'src/'),
-      '@components': join(opts.cwd, 'src/components/'),
-      ...(userConfig.alias || {}),
-    },
-    extensions: ['.js', '.ts', '.jsx', '.tsx', '.cjs', '.mjs', '.json', '.wasm'],
-  };
+  config.resolve
+    .set('symlinks', true)
+    .modules.add('node_modules')
+    .end()
+    .alias.merge(userConfig.alias || {})
+    .end()
+    .extensions.merge(['.js', '.ts', '.jsx', '.tsx', '.cjs', '.mjs', '.json', '.wasm'])
+    .end();
 
   // externals
-  config.externals = userConfig.externals || {};
+  config.externals(userConfig.externals || {});
 
   // target
-  config.target = ['web', 'es5'];
+  config.target(['web', 'es5']);
 
   // cache
-  config.cache = {
+  config.cache({
     type: 'filesystem',
+    version: require('../../package.json').version,
     buildDependencies: {
       config: getValidPaths([
         join(opts.cwd, 'elza.config.js'),
@@ -80,23 +96,27 @@ export async function getConfig(opts: IOpts) {
         join(opts.cwd, 'package.json'),
       ]),
     },
-    cacheDirectory: join(opts.cwd, 'node_modules/.elza/cache'),
-  };
+    cacheDirectory: join(opts.cwd, 'node_modules', '.elza', 'cache'),
+  });
 
   // rules
-  config.module = { rules: [] };
   await addJavascriptRules(applyOpts);
   await addCssRules(applyOpts);
 
   // plugins
-  config.plugins = [];
-  config.plugins?.push(new webpack.HotModuleReplacementPlugin());
-  config.plugins?.push(new BetterInfo({}));
+  if (isDev && opts.hmr) {
+    config.plugin('hmr').use(new webpack.HotModuleReplacementPlugin());
+  }
+  config.plugin('better-info').use(new BetterInfo({}));
   await addHtmlWebpackPlugin(applyOpts);
   await addMiniCssExtractPlugin(applyOpts);
   await addAutoRoutesPlugin(applyOpts);
 
-  return config;
+  if (userConfig.chainWebpack) {
+    userConfig.chainWebpack(config, { env: opts.env });
+  }
+
+  return config.toConfig();
 }
 
 export async function getUserConfig(cwd: string): Promise<IConfig> {

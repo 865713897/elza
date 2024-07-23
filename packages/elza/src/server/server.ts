@@ -1,10 +1,10 @@
 import http from 'http';
 import express from 'express';
 import cors from 'cors';
-import logger from '../utils/logger';
 import webpack, { Stats, Configuration } from 'webpack';
 import WebpackDevMiddleware from 'webpack-dev-middleware';
 import { getDevBanner } from '../utils/getDevBanner';
+import logger from '../utils/logger';
 import { MESSAGE_TYPE } from '../constants';
 import { createWebSocketServer } from './ws';
 import { IConfig } from '../types';
@@ -16,13 +16,11 @@ interface IOpts {
   port?: number;
 }
 
-export const createServer = (opts: IOpts) => {
+export const createServer = async (opts: IOpts) => {
   const { webpackConfig, userConfig } = opts;
   let ws: ReturnType<typeof createWebSocketServer>;
   const app = express();
-  const compiler = webpack({
-    ...webpackConfig,
-  });
+  const compiler = webpack(webpackConfig);
 
   app.use(
     cors({
@@ -100,7 +98,6 @@ export const createServer = (opts: IOpts) => {
   const server = http.createServer(app);
 
   ws = createWebSocketServer(server);
-
   ws.wss.on('connection', (socket) => {
     if (stats) {
       sendStats(getStats(stats), false, socket);
@@ -108,11 +105,18 @@ export const createServer = (opts: IOpts) => {
   });
 
   const port = opts.port || 3000;
-
   server.listen(port, () => {
     const { before, main, after } = getDevBanner();
     console.log(before);
     logger.ready(main);
     console.log(after);
   });
+  process.on('SIGINT', () => {
+    server.close();
+    process.exit(0);
+  })
+  process.on('SIGTERM', () => {
+    server.close();
+    process.exit(1);
+  })
 };
