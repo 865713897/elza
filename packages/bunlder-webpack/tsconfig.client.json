@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "sourceMap": false,
+    "declarationMap": false,
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "outDir": "client",
+    "rootDir": "./src"
+  },
+  "include": ["src/client/client.ts", "src/constants.ts"]
+}
