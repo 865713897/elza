@@ -1,0 +1,28 @@
+import { Command } from 'commander';
+import { join } from 'path';
+// import { tryPaths } from './utils/tryPath';
+import { dev } from './dev';
+
+const cli = new Command();
+const cwd = process.cwd();
+
+// const entry = tryPaths([
+//   join(cwd, 'src/index.jsx'),
+//   join(cwd, 'src/index.tsx'),
+//   join(cwd, 'src/index.js'),
+//   join(cwd, 'src/index.ts'),
+// ]);
+
+cli
+  .version(require('../package.json').version, '-v, --version', '输出当前框架版本')
+  .description('Elza CLI');
+
+cli
+  .command('dev')
+  .description('启动开发服务器')
+  .option('-p, --port <port>', '指定端口号')
+  .action(async (options) => {
+    await dev({ cwd });
+  });
+
+cli.parse(process.argv);

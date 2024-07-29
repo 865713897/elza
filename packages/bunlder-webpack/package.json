@@ -4,7 +4,6 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "pnpm run build:client && pnpm run build:server",
     "build:client": "tsc -b ./tsconfig.client.json",
     "build:server": "tsc -b ./tsconfig.server.json"
   },

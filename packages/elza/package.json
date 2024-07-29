@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "pnpm run build:client && pnpm run build:server",
+    "build": "pnpm run build:server",
     "build:client": "tsc -b ./tsconfig.client.json",
     "build:server": "tsc -b ./tsconfig.server.json"
   },
@@ -28,6 +28,7 @@
     "@types/ws": "^8.5.11",
     "chalk": "^4.1.2",
     "esbuild": "^0.23.0",
+    "esbuild-plugin-external-global": "^1.0.1",
     "express": "^4.19.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.3",
