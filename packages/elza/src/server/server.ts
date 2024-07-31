@@ -30,6 +30,10 @@ export const createServer = async (opts: IOpts) => {
     }),
   );
 
+  app.use('/__elza_ping', (_, res) => {
+    res.send('pong');
+  });
+
   app.use(
     WebpackDevMiddleware(compiler, {
       publicPath: userConfig.publicPath || '/',
@@ -90,10 +94,6 @@ export const createServer = async (opts: IOpts) => {
       errorDetails: false,
     });
   }
-
-  app.use('/__elza_ping', (_, res) => {
-    res.send('pong');
-  });
 
   const server = http.createServer(app);
 

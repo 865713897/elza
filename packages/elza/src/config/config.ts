@@ -10,6 +10,7 @@ import { Env, IConfig } from '../types';
 
 import { addJavascriptRules } from './jsRules';
 import { addCssRules } from './cssRules';
+import { addAssetRules } from './assetRules';
 
 import { addHtmlWebpackPlugin } from './htmlWebpackPlugin';
 import { addMiniCssExtractPlugin } from './miniCssExtractPlugin';
@@ -102,6 +103,7 @@ export async function getConfig(opts: IOpts) {
   // rules
   await addJavascriptRules(applyOpts);
   await addCssRules(applyOpts);
+  await addAssetRules(applyOpts);
 
   // plugins
   if (isDev && opts.hmr) {

@@ -46,7 +46,10 @@ export async function addCssRules(opts: IOpts) {
     ].filter(Boolean);
     for (const { nestRule, isAutoCssModules } of nestRulesConfig) {
       if (isDev) {
-        nestRule.use('style-loader').loader(require.resolve('style-loader'));
+        nestRule
+          .use('style-loader')
+          .loader(require.resolve('style-loader'))
+          .options({ esModule: true });
       } else {
         nestRule
           .use('mini-css-extract-loader')
@@ -60,7 +63,12 @@ export async function addCssRules(opts: IOpts) {
             ? {
                 localIdentName: '[name]__[local]-[hash:base64:5]',
               }
-            : undefined,
+            : {
+                auto: (resourcePath: string) => resourcePath.endsWith(`.modules.${name}`),
+                localIdentName: '[name]__[local]-[hash:base64:5]',
+              },
+          esModule: true,
+          import: true,
         });
       nestRule
         .use('postcss-loader')
