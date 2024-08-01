@@ -10,3 +10,6 @@ function renderApp() {
 
 renderApp();
 
+if (module.hot) {
+  module.hot.accept('./router', renderApp);
+}

@@ -1,7 +1,7 @@
 import Config from '../../compiled/webpack-5-chain';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
-import { IConfig } from '../types';
+import { IConfig, JSMinifier, CSSMinifier } from '../types';
 
 interface IOpts {
   cwd: string;
@@ -10,8 +10,11 @@ interface IOpts {
   isDev: boolean;
 }
 
-export function addCompressPlugin(opts: IOpts) {
+export async function addCompressPlugin(opts: IOpts) {
   const { config, userConfig, isDev } = opts;
+  const jsMinifier = userConfig.jsMinifier || JSMinifier.swc;
+  const cssMinifier = userConfig.cssMinifier || CSSMinifier.cssnano;
+
   if (isDev) {
     config.optimization.minimize(false);
     return;
@@ -20,18 +23,37 @@ export function addCompressPlugin(opts: IOpts) {
 
   let minify: any;
   let terserOptions: { [key: string]: any };
-  minify = TerserPlugin.esbuildMinify;
-  terserOptions = {
-    target: ['es2015'],
-    legalComments: false,
-  };
-  config.optimization.minimizer(`js-esbuild`).use(TerserPlugin, [{ minify, terserOptions }]);
+  if (jsMinifier === JSMinifier.esbuild) {
+    minify = TerserPlugin.esbuildMinify;
+    terserOptions = {
+      target: ['es2015'],
+      legalComments: false,
+    };
+  } else if (jsMinifier === JSMinifier.swc) {
+    minify = TerserPlugin.swcMinify;
+  } else if (jsMinifier === JSMinifier.terser) {
+    minify = TerserPlugin.terserMinify;
+    terserOptions = {
+      format: {
+        comments: false,
+      },
+    };
+  } else if (jsMinifier !== JSMinifier.none) {
+    throw new Error(`Unsupported js minifier: ${jsMinifier}`);
+  }
+  config.optimization.minimizer(`js-${jsMinifier}`).use(TerserPlugin, [{ minify, terserOptions }]);
 
   let cssMinify: any;
   let minimizerOptions: { [key: string]: any };
-  cssMinify = CssMinimizerPlugin.esbuildMinify;
-  minimizerOptions = { target: ['es2015'] };
-  config.optimization.minimizer(`css-esbuild`).use(CssMinimizerPlugin, [
+  if (cssMinifier === CSSMinifier.esbuild) {
+    cssMinify = CssMinimizerPlugin.esbuildMinify;
+    minimizerOptions = { target: ['es2015'] };
+  } else if (cssMinifier === CSSMinifier.cssnano) {
+    cssMinify = CssMinimizerPlugin.cssnanoMinify;
+  } else if (cssMinifier !== CSSMinifier.none) {
+    throw new Error(`Unsupported css minifier: ${cssMinifier}`);
+  }
+  config.optimization.minimizer(`css-${cssMinifier}`).use(CssMinimizerPlugin, [
     {
       minify: cssMinify,
       minimizerOptions,

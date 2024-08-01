@@ -15,6 +15,7 @@ import { addAssetRules } from './assetRules';
 import { addHtmlWebpackPlugin } from './htmlWebpackPlugin';
 import { addMiniCssExtractPlugin } from './miniCssExtractPlugin';
 import { addAutoRoutesPlugin } from './autoRoutesPlugin';
+import { addCompressPlugin } from './compressPlugin';
 
 interface IOpts {
   cwd: string;
@@ -109,10 +110,11 @@ export async function getConfig(opts: IOpts) {
   if (isDev && opts.hmr) {
     config.plugin('hmr').use(new webpack.HotModuleReplacementPlugin());
   }
-  config.plugin('better-info').use(new BetterInfo({}));
+  // config.plugin('better-info').use(new BetterInfo({}));
   await addHtmlWebpackPlugin(applyOpts);
   await addMiniCssExtractPlugin(applyOpts);
   await addAutoRoutesPlugin(applyOpts);
+  await addCompressPlugin(applyOpts);
 
   if (userConfig.chainWebpack) {
     userConfig.chainWebpack(config, { env: opts.env });

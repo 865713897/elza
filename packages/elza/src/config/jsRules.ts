@@ -1,14 +1,16 @@
 import Config from '../../compiled/webpack-5-chain';
+import { autoCssModulesWithEsbuild } from '../plugins/autoCssModulesWithEsbuild';
 import { IConfig, Transpiler } from '../types';
 
 interface IOpts {
   config: Config;
   userConfig: IConfig;
   cwd: string;
+  isDev: boolean;
 }
 
 export async function addJavascriptRules(opts: IOpts) {
-  const { config, userConfig } = opts;
+  const { config, userConfig, isDev } = opts;
   const rules = [
     config.module
       .rule('j|tsx')
@@ -17,7 +19,7 @@ export async function addJavascriptRules(opts: IOpts) {
       .end(),
   ];
 
-  const transpiler = userConfig.transpiler || Transpiler.babel;
+  const transpiler = userConfig.transpiler || Transpiler.swc;
 
   rules.forEach((rule) => {
     if (transpiler === Transpiler.babel) {
@@ -47,6 +49,14 @@ export async function addJavascriptRules(opts: IOpts) {
             target: 'es2015',
           },
           minify: true,
+        });
+    } else if (transpiler === Transpiler.esbuild) {
+      rule
+        .use('esbuild-loader')
+        .loader(require.resolve('esbuild-loader'))
+        .options({
+          target: isDev ? 'esnext' : 'es2015',
+          handler: [autoCssModulesWithEsbuild],
         });
     }
   });
