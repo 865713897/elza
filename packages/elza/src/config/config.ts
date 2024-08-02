@@ -1,4 +1,5 @@
 import webpack, { Configuration } from 'webpack';
+import fs from 'fs';
 import { resolve, join } from 'path';
 import { build } from 'esbuild';
 import BetterInfo from 'webpack-plugin-better-info';
@@ -16,6 +17,7 @@ import { addHtmlWebpackPlugin } from './htmlWebpackPlugin';
 import { addMiniCssExtractPlugin } from './miniCssExtractPlugin';
 import { addAutoRoutesPlugin } from './autoRoutesPlugin';
 import { addCompressPlugin } from './compressPlugin';
+import { addBetterInfoPlugin } from './betterInfoPlugin';
 
 interface IOpts {
   cwd: string;
@@ -110,11 +112,11 @@ export async function getConfig(opts: IOpts) {
   if (isDev && opts.hmr) {
     config.plugin('hmr').use(new webpack.HotModuleReplacementPlugin());
   }
-  // config.plugin('better-info').use(new BetterInfo({}));
   await addHtmlWebpackPlugin(applyOpts);
   await addMiniCssExtractPlugin(applyOpts);
   await addAutoRoutesPlugin(applyOpts);
   await addCompressPlugin(applyOpts);
+  // await addBetterInfoPlugin(applyOpts);
 
   if (userConfig.chainWebpack) {
     userConfig.chainWebpack(config, { env: opts.env });
@@ -128,6 +130,13 @@ export async function getUserConfig(cwd: string): Promise<IConfig> {
   let config = {};
   const outputPath = resolve(cwd, 'node_modules/.elza/elza.config.js');
   if (configFile) {
+    const fileContent = fs.readFileSync(configFile, 'utf-8');
+    const importRegex = /import\s+(?:.*?\s+from\s+)?['"]([^'"]+)['"]/g;
+    const packages = new Set<string>();
+    let match: string[];
+    while ((match = importRegex.exec(fileContent)) !== null) {
+      packages.add(match[1]);
+    }
     await build({
       entryPoints: [configFile],
       outfile: outputPath,
@@ -135,6 +144,7 @@ export async function getUserConfig(cwd: string): Promise<IConfig> {
       format: 'cjs',
       sourcemap: false,
       platform: 'node',
+      external: Array.from(packages),
     });
     config = require(outputPath).default;
     config = resolveConfig(config, cwd);
