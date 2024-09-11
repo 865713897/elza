@@ -2,7 +2,6 @@ import webpack, { Configuration } from 'webpack';
 import fs from 'fs';
 import { resolve, join } from 'path';
 import { build } from 'esbuild';
-import BetterInfo from 'webpack-plugin-better-info';
 import Config from '../../compiled/webpack-5-chain';
 import { tryPaths } from '../utils/tryPath';
 import { getValidPaths } from '../utils/getValidPaths';
@@ -18,6 +17,8 @@ import { addMiniCssExtractPlugin } from './miniCssExtractPlugin';
 import { addAutoRoutesPlugin } from './autoRoutesPlugin';
 import { addCompressPlugin } from './compressPlugin';
 import { addBetterInfoPlugin } from './betterInfoPlugin';
+import { addCopyPlugin } from './copyPlugin';
+import { addDefinePlugin } from './definePlugin';
 
 interface IOpts {
   cwd: string;
@@ -27,7 +28,7 @@ interface IOpts {
   userConfig: IConfig;
 }
 
-export async function getConfig(opts: IOpts) {
+export async function getConfig(opts: IOpts): Promise<Configuration> {
   const { userConfig } = opts;
   const isDev = opts.env === Env.development;
   const config = new Config();
@@ -60,8 +61,8 @@ export async function getConfig(opts: IOpts) {
   );
 
   // output
-  const filename = isDev ? '[name].js' : 'static/js/[name].[contenthash:8].js';
-  const chunkFilename = isDev ? '[name].async.js' : 'static/js/[name].[contenthash:8].async.js';
+  const filename = `static/js/[name]${isDev ? '' : '.[contenthash:8]'}.js`;
+  const chunkFilename = `static/js/async/[name]${isDev ? '' : '.[contenthash:8]'}.async.js`;
   const absOutputPath = resolve(opts.cwd, DEFAULT_OUTPUT_PATH);
   config.output
     .path(absOutputPath)
@@ -78,7 +79,11 @@ export async function getConfig(opts: IOpts) {
     .set('symlinks', true)
     .modules.add('node_modules')
     .end()
-    .alias.merge(userConfig.alias || {})
+    .alias.merge(
+      userConfig.alias || {
+        '@': './src',
+      },
+    )
     .end()
     .extensions.merge(['.js', '.ts', '.jsx', '.tsx', '.cjs', '.mjs', '.json', '.wasm'])
     .end();
@@ -116,7 +121,9 @@ export async function getConfig(opts: IOpts) {
   await addMiniCssExtractPlugin(applyOpts);
   await addAutoRoutesPlugin(applyOpts);
   await addCompressPlugin(applyOpts);
-  // await addBetterInfoPlugin(applyOpts);
+  await addBetterInfoPlugin(applyOpts);
+  await addCopyPlugin(applyOpts);
+  await addDefinePlugin(applyOpts);
 
   if (userConfig.chainWebpack) {
     userConfig.chainWebpack(config, { env: opts.env });

@@ -6,7 +6,7 @@ class Logger {
   }
 
   title(message: string) {
-    console.log(`  ${message}\n`);
+    console.log(`${chalk.bold(message)}\n`);
   }
 }
 

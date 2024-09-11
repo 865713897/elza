@@ -37,8 +37,8 @@ export async function addJavascriptRules(opts: IOpts) {
         .options({
           jsc: {
             parser: {
-              syntax: 'ecmascript',
-              jsx: true,
+              syntax: 'typescript',
+              tsx: true,
               decorators: false,
               dynamicImport: true,
             },
@@ -47,13 +47,18 @@ export async function addJavascriptRules(opts: IOpts) {
             },
             preserveAllComments: true,
             target: 'es2015',
+            transform: {
+              react: {
+                runtime: 'automatic',
+              },
+            },
           },
           minify: true,
         });
     } else if (transpiler === Transpiler.esbuild) {
       rule
         .use('esbuild-loader')
-        .loader(require.resolve('esbuild-loader'))
+        .loader(require.resolve('../loader/esbuild'))
         .options({
           target: isDev ? 'esnext' : 'es2015',
           handler: [autoCssModulesWithEsbuild],

@@ -24,7 +24,7 @@ export default function AppRouter() {
     <Router>
       <Routes>
         {renderRoutes(routes)}
-        <Route path="*" element={<Navigate to="/home" />} />
+        <Route path="/" element={<Navigate to="/home" />} />
       </Routes>
     </Router>
   );

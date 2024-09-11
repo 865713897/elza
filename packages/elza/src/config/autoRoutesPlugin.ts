@@ -10,13 +10,12 @@ interface IOpts {
 
 export async function addAutoRoutesPlugin(opts: IOpts) {
   const { config, userConfig } = opts;
-  const options = userConfig?.pluginOptions?.['webpack-plugin-auto-routes'] || {};
   config.plugin('auto-routes').use(
     new AutoRoutesPlugin({
-      routingMode: 'browser',
+      routingMode: 'hash',
       onlyRoutes: true,
       indexPath: '/home',
-      ...options,
+      ...(userConfig.autoRoutesOption || {}),
     }),
   );
 }

@@ -1,3 +1,4 @@
+import BetterInfoPlugin from 'webpack-plugin-better-info';
 import Config from '../../compiled/webpack-5-chain';
 import { IConfig } from '../types';
 
@@ -8,6 +9,6 @@ interface IOpts {
 }
 
 export async function addBetterInfoPlugin(opts: IOpts) {
-  const { config } = opts;
-  // config.plugin('betterInfoPlugin').use(new BetterInfoPlugin({}));
+  const { config, userConfig } = opts;
+  config.plugin('betterInfoPlugin').use(new BetterInfoPlugin(userConfig.betterInfoOption || {}));
 }

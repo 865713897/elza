@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import webpack, { Stats, Configuration } from 'webpack';
 import WebpackDevMiddleware from 'webpack-dev-middleware';
+import ConnectHistoryApiFallback from 'connect-history-api-fallback';
 import { getDevBanner } from '../utils/getDevBanner';
 import logger from '../utils/logger';
 import { MESSAGE_TYPE } from '../constants';
@@ -30,10 +31,6 @@ export const createServer = async (opts: IOpts) => {
     }),
   );
 
-  app.use('/__elza_ping', (_, res) => {
-    res.send('pong');
-  });
-
   app.use(
     WebpackDevMiddleware(compiler, {
       publicPath: userConfig.publicPath || '/',
@@ -41,6 +38,13 @@ export const createServer = async (opts: IOpts) => {
       stats: 'none',
     }),
   );
+
+  // TODO: 解决history模式下404问题
+  app.use(ConnectHistoryApiFallback({ index: '/' }));
+
+  app.use('/__elza_ping', (_, res) => {
+    res.send('pong');
+  });
 
   // hmr
   let stats: any;
@@ -106,17 +110,18 @@ export const createServer = async (opts: IOpts) => {
 
   const port = opts.port || 3000;
   server.listen(port, () => {
-    const { before, main, after } = getDevBanner();
+    const { before, main, after } = getDevBanner({ port });
     console.log(before);
     logger.ready(main);
     console.log(after);
   });
+
   process.on('SIGINT', () => {
     server.close();
     process.exit(0);
-  })
+  });
   process.on('SIGTERM', () => {
     server.close();
     process.exit(1);
-  })
+  });
 };

@@ -27,6 +27,7 @@ cli
   .description('启动开发服务器')
   .option('-p, --port <port>', '指定端口号')
   .action(async (options) => {
+    process.env.NODE_ENV = 'development';
     await dev({ cwd, entry });
   });
 
@@ -34,6 +35,7 @@ cli
   .command('build')
   .description('打包项目')
   .action(async (options) => {
+    process.env.NODE_ENV = 'production';
     await build({ cwd, entry });
   });
 

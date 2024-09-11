@@ -1,5 +1,10 @@
 import chalk from 'chalk';
+import * as address from 'address';
 import stripAnsi from 'strip-ansi';
+
+interface IOpts {
+  port: number;
+}
 
 const BORDERS = {
   TL: '┌',
@@ -10,9 +15,13 @@ const BORDERS = {
   V: '│',
 };
 
-export function getDevBanner() {
-  const header = `  > Local:   ${chalk.cyan('http://localhost:3000')}  `;
-  const network = `  > Network: ${chalk.cyan('http://192.168.1.100:3000')}  `;
+export function getDevBanner(opts: IOpts) {
+  const { port } = opts;
+  const header = `  > Local:   ${chalk.cyan(`http://localhost:${port}`)}  `;
+  const ip = address.ip();
+  const network = `  > Network: ${
+    ip ? chalk.cyan(`http://${ip}:${port}`) : chalk.gray('Not available')
+  }  `;
   const footer = `  ${chalk.whiteBright('Now you can open browser with the above address↑')}  `;
   const maxLen = Math.max(...[header, network, footer].map((s) => stripAnsi(s).length));
   const beforeLines = [

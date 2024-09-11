@@ -1,7 +1,9 @@
+import { IEsbuildLoaderHandlerParams } from '../types'
+
 const CSS_SUFFIX_REGX = /\.(:?css|less|scss|sass)$/;
 const FILE_SUFFIX = '?css_modules';
 
-export function autoCssModulesWithEsbuild(opts: any) {
+export function autoCssModulesWithEsbuild(opts: IEsbuildLoaderHandlerParams) {
   let { code } = opts;
   let offset = 0;
   opts.imports.forEach((i) => {
