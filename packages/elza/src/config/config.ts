@@ -68,9 +68,9 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
     .path(absOutputPath)
     .filename(filename)
     .chunkFilename(chunkFilename)
-    .publicPath('/')
+    .publicPath(userConfig.publicPath || '/')
     .pathinfo(isDev)
-    .set('assetModuleFilename', 'static/[name].[hash:8][ext')
+    .set('assetModuleFilename', 'static/[name].[hash:8][ext]')
     .set('hashFunction', 'xxhash64')
     .clean(true);
 
@@ -81,7 +81,7 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
     .end()
     .alias.merge(
       userConfig.alias || {
-        '@': './src',
+        '@': opts.cwd + '/src',
       },
     )
     .end()
@@ -107,6 +107,8 @@ export async function getConfig(opts: IOpts): Promise<Configuration> {
     },
     cacheDirectory: join(opts.cwd, 'node_modules', '.elza', 'cache'),
   });
+
+  config.infrastructureLogging({ level: 'none' });
 
   // rules
   await addJavascriptRules(applyOpts);

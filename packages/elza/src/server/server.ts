@@ -1,6 +1,7 @@
 import http from 'http';
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
 import webpack, { Stats, Configuration } from 'webpack';
 import WebpackDevMiddleware from 'webpack-dev-middleware';
 import ConnectHistoryApiFallback from 'connect-history-api-fallback';
@@ -21,6 +22,7 @@ export const createServer = async (opts: IOpts) => {
   const { webpackConfig, userConfig } = opts;
   let ws: ReturnType<typeof createWebSocketServer>;
   const app = express();
+  const cacheDir = path.resolve(opts.cwd, 'node_modules/.elza/cache');
   const compiler = webpack(webpackConfig);
 
   app.use(
@@ -41,6 +43,24 @@ export const createServer = async (opts: IOpts) => {
 
   // TODO: 解决history模式下404问题
   app.use(ConnectHistoryApiFallback({ index: '/' }));
+
+  // SPA 路由处理
+  app.use((req, res, next) => {
+    if (req.method === 'GET' && !req.path.startsWith('/static')) {
+      const fs = compiler.outputFileSystem;
+      const filePath = path.join(compiler.outputPath, 'index.html');
+      fs.readFile(filePath, (err, file) => {
+        if (err) {
+          next(err);
+        } else {
+          res.set('content-type', 'text/html');
+          res.send(file);
+        }
+      });
+    } else {
+      next();
+    }
+  });
 
   app.use('/__elza_ping', (_, res) => {
     res.send('pong');

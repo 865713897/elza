@@ -22,6 +22,5 @@ export async function dev(opts: IOpts) {
     hmr: true,
     userConfig,
   });
-
   await createServer({ webpackConfig, cwd: opts.cwd, userConfig });
 }

@@ -10,12 +10,5 @@ interface IOpts {
 
 export async function addAutoRoutesPlugin(opts: IOpts) {
   const { config, userConfig } = opts;
-  config.plugin('auto-routes').use(
-    new AutoRoutesPlugin({
-      routingMode: 'hash',
-      onlyRoutes: true,
-      indexPath: '/home',
-      ...(userConfig.autoRoutesOption || {}),
-    }),
-  );
+  config.plugin('auto-routes').use(new AutoRoutesPlugin(userConfig.autoRoutesOption || {}));
 }
